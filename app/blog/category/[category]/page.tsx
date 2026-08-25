@@ -1,0 +1,71 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
+import { getCategoriesInUse, getPostsByCategory, categoryToSlug, slugToCategory } from '@/lib/blog-data';
+import { siteConfig } from '@/lib/site-config';
+import BlogCard from '@/components/BlogCard';
+import RevealSection from '@/components/RevealSection';
+import { notFound } from 'next/navigation';
+
+export function generateStaticParams() {
+  return getCategoriesInUse().map((c) => ({ category: categoryToSlug(c) }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+  const { category: categorySlug } = await params;
+  const category = slugToCategory(categorySlug);
+  if (!category) return {};
+  return {
+    title: `${category} Articles`,
+    description: `Browse all DigitalAI Learning blog articles in the ${category} category.`,
+    alternates: { canonical: `/blog/category/${categorySlug}` },
+  };
+}
+
+export default async function BlogCategoryPage({ params }: { params: Promise<{ category: string }> }) {
+  const { category: categorySlug } = await params;
+  const category = slugToCategory(categorySlug);
+  if (!category) notFound();
+
+  const posts = getPostsByCategory(category);
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.brand.domain },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteConfig.brand.domain}/blog` },
+      { '@type': 'ListItem', position: 3, name: category, item: `${siteConfig.brand.domain}/blog/category/${categorySlug}` },
+    ],
+  };
+
+  return (
+    <div className="pb-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <nav aria-label="Breadcrumb" className="mx-auto max-w-6xl px-5 pt-6 lg:px-8">
+        <ol className="flex items-center gap-1.5 text-xs text-mist">
+          <li><Link href="/" className="focus-ring hover:text-paper">Home</Link></li>
+          <li><ChevronRight className="h-3 w-3" /></li>
+          <li><Link href="/blog" className="focus-ring hover:text-paper">Blog</Link></li>
+          <li><ChevronRight className="h-3 w-3" /></li>
+          <li className="text-paper">{category}</li>
+        </ol>
+      </nav>
+
+      <RevealSection className="mx-auto max-w-3xl px-5 py-10 text-center lg:px-8">
+        <h1 className="font-display text-4xl font-extrabold lg:text-5xl">{category} Articles</h1>
+        <p className="mt-4 text-mist">{posts.length} article{posts.length === 1 ? '' : 's'} in this category.</p>
+      </RevealSection>
+
+      <section className="mx-auto max-w-6xl px-5 pb-14 lg:px-8">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post, i) => (
+            <RevealSection key={post.slug} delay={i * 0.05}>
+              <BlogCard post={post} />
+            </RevealSection>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

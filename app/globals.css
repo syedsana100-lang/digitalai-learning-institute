@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Color tokens — change these to re-theme the entire site */
+  --color-bg: #05070D;
+  --color-bg-elevated: #0A0E1A;
+  --color-surface: #0F1526;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #F7F8FC;
+  --color-text-secondary: #A6ADC4;
+  --color-accent-blue: #3D6BFF;
+  --color-accent-violet: #8B5CF6;
+  --color-accent-cyan: #22D3EE;
+
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.glass {
+  background: rgba(15, 21, 38, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+}
+
+/* Light (off-white) section styling for the 40/40/20 balanced color system */
+.section-light {
+  background: #F8FAFC;
+  color: #0B1020;
+}
+.section-light .text-mist { color: #55607A; }
+.section-light .glass-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(11, 16, 32, 0.08);
+}
+.section-light .card-light {
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 16, 32, 0.08);
+  box-shadow: 0 4px 24px rgba(11, 16, 32, 0.06);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent-cyan);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}

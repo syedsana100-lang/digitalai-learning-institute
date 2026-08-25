@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Manrope, Inter, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -18,7 +19,12 @@ export const metadata: Metadata = {
   },
   description:
     'Build practical technology and digital skills through structured online learning, projects, mentorship and career-focused guidance — from anywhere in India.',
-  openGraph: {
+
+verification: {
+  google: 'VVqnirWxtYtL67xab7qFG-E7cCy4HNlUBnloHeXN_gg',
+},  
+
+openGraph: {
     type: 'website',
     siteName: siteConfig.brand.name,
     locale: 'en_IN',
@@ -44,6 +50,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="bg-ink-950 text-paper font-body antialiased">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NQQG8RB9');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NQQG8RB9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <Header />
         <main>{children}</main>

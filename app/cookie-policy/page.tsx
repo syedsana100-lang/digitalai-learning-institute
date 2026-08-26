@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
 import RevealSection from "@/components/RevealSection";
+import { siteConfig } from "@/lib/site-config";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Cookie Policy",
   description: "Cookie Policy for DigitalAI Learning Institute.",
-};
+  path: "/cookie-policy",
+});
 
 export default function Page() {
   return (
@@ -30,7 +32,7 @@ export default function Page() {
           <div>
             <h2 className="font-display text-lg font-semibold text-paper">2. Scope</h2>
             <p className="mt-2">
-              This policy applies to all users of digitalailearning.example and all online courses
+              This policy applies to all users of {siteConfig.brand.domain.replace(/^https?:\/\//, '')} and all online courses
               offered by DigitalAI Learning Institute. [Insert business-specific detail here.]
             </p>
           </div>

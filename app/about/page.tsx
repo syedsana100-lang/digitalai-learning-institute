@@ -1,11 +1,12 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import RevealSection from '@/components/RevealSection';
 import CTASection from '@/components/CTASection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'About Us',
   description: 'Learn about DigitalAI Learning Institute — an India-wide online technical education institute.',
-};
+  path: '/about',
+});
 
 const sections = [
   { title: 'Our Story', text: 'DigitalAI Learning Institute was founded to make practical, career-oriented technology education accessible to students anywhere in India — not just those near a physical training centre.' },

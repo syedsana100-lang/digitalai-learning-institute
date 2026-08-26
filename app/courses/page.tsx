@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import CourseGrid from '@/components/CourseGrid';
 import RevealSection from '@/components/RevealSection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'Online Courses',
   description:
     'Explore online technical and digital courses in AI, Data Science, Programming, Development, Digital Marketing, Cloud & Security and Design — open to students across India.',
-};
+  path: '/courses',
+});
 
 export default function CoursesPage() {
   return (

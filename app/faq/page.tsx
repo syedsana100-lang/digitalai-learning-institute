@@ -1,11 +1,12 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import FAQAccordion from '@/components/FAQAccordion';
 import RevealSection from '@/components/RevealSection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'FAQ',
   description: 'Frequently asked questions about DigitalAI Learning Institute online courses, fees and enrolment.',
-};
+  path: '/faq',
+});
 
 const faqs = [
   { question: 'Who can join the courses?', answer: 'Anyone from college students to working professionals across India — most programs assume no prior technical background.' },

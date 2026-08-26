@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import { Check, X } from 'lucide-react';
 import { pricingPlans, comparisonRows } from '@/lib/pricing-data';
 import RevealSection from '@/components/RevealSection';
 import CTASection from '@/components/CTASection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'Course Fees',
   description: 'Transparent course fee plans and comparisons for DigitalAI Learning Institute online programs.',
-};
+  path: '/fees',
+});
 
 export default function FeesPage() {
   return (
@@ -56,18 +57,18 @@ export default function FeesPage() {
             <thead>
               <tr className="border-b border-white/8 bg-ink-900 text-left text-mist">
                 <th className="px-5 py-4 font-medium">Feature</th>
-                <th className="px-5 py-4 font-medium">Foundation</th>
+                <th className="px-5 py-4 font-medium">Basic</th>
                 <th className="px-5 py-4 font-medium">Professional</th>
-                <th className="px-5 py-4 font-medium">Career Track</th>
+                <th className="px-5 py-4 font-medium">Premium</th>
               </tr>
             </thead>
             <tbody>
               {comparisonRows.map((row) => (
                 <tr key={row.feature} className="border-b border-white/5 last:border-0">
                   <td className="px-5 py-4 text-mist">{row.feature}</td>
-                  <td className="px-5 py-4">{row.foundation ? <Check className="h-4 w-4 text-signal-cyan" /> : <X className="h-4 w-4 text-mist/40" />}</td>
+                  <td className="px-5 py-4">{row.basic ? <Check className="h-4 w-4 text-signal-cyan" /> : <X className="h-4 w-4 text-mist/40" />}</td>
                   <td className="px-5 py-4">{row.professional ? <Check className="h-4 w-4 text-signal-cyan" /> : <X className="h-4 w-4 text-mist/40" />}</td>
-                  <td className="px-5 py-4">{row.careerTrack ? <Check className="h-4 w-4 text-signal-cyan" /> : <X className="h-4 w-4 text-mist/40" />}</td>
+                  <td className="px-5 py-4">{row.premium ? <Check className="h-4 w-4 text-signal-cyan" /> : <X className="h-4 w-4 text-mist/40" />}</td>
                 </tr>
               ))}
             </tbody>
@@ -80,9 +81,9 @@ export default function FeesPage() {
             <div key={row.feature} className="rounded-xl border border-white/8 bg-ink-900 p-4">
               <p className="text-sm font-medium">{row.feature}</p>
               <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-mist">
-                <span className="flex items-center gap-1">{row.foundation ? <Check className="h-3.5 w-3.5 text-signal-cyan" /> : <X className="h-3.5 w-3.5 text-mist/40" />} Foundation</span>
+                <span className="flex items-center gap-1">{row.basic ? <Check className="h-3.5 w-3.5 text-signal-cyan" /> : <X className="h-3.5 w-3.5 text-mist/40" />} Basic</span>
                 <span className="flex items-center gap-1">{row.professional ? <Check className="h-3.5 w-3.5 text-signal-cyan" /> : <X className="h-3.5 w-3.5 text-mist/40" />} Pro</span>
-                <span className="flex items-center gap-1">{row.careerTrack ? <Check className="h-3.5 w-3.5 text-signal-cyan" /> : <X className="h-3.5 w-3.5 text-mist/40" />} Career</span>
+                <span className="flex items-center gap-1">{row.premium ? <Check className="h-3.5 w-3.5 text-signal-cyan" /> : <X className="h-3.5 w-3.5 text-mist/40" />} Premium</span>
               </div>
             </div>
           ))}

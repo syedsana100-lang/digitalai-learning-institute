@@ -11,9 +11,6 @@ const stories = [
   { name: '[Student Name]', course: 'Data Science', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success1' },
   { name: '[Student Name]', course: 'Full Stack Development', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success2' },
   { name: '[Student Name]', course: 'Cyber Security', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success3' },
-  { name: '[Student Name]', course: 'Artificial Intelligence', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success4' },
-  { name: '[Student Name]', course: 'Digital Marketing', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success5' },
-  { name: '[Student Name]', course: 'Data Science', before: '[Before Role/Salary]', after: '[After Role/Salary]', company: '[Company Name]', seed: 'success6' },
 ];
 
 export default function StudentSuccessStories() {

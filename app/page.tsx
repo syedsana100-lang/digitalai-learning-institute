@@ -1,4 +1,3 @@
-import { buildMetadata } from '@/lib/seo';
 import Hero from '@/components/Hero';
 import StatsSection from '@/components/StatsSection';
 import WhyDigitalAI from '@/components/WhyDigitalAI';
@@ -11,28 +10,24 @@ import AnywhereInIndia from '@/components/AnywhereInIndia';
 import LearningJourney from '@/components/LearningJourney';
 import SkillStack from '@/components/SkillStack';
 import ReviewsSection from '@/components/ReviewsSection';
-import HomepageFAQSection from '@/components/HomepageFAQSection';
+import HomeFAQSection from '@/components/HomeFAQSection';
 import CTASection from '@/components/CTASection';
-import { siteConfig } from '@/lib/site-config';
+import { getMergedCourses, getHomepageFaqs } from '@/sanity/lib/content';
+import { homepageFaqFallback } from '@/lib/faq-data';
 
-export const metadata = {
-  ...buildMetadata({
-    title: `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`,
-    description:
-      'Build practical technology and digital skills through structured online and offline learning, projects, mentorship and career-focused guidance — from anywhere in India.',
-    path: '',
-  }),
-  title: { absolute: `${siteConfig.brand.name} — ${siteConfig.brand.tagline}` },
-};
+export default async function HomePage() {
+  const [courses, homeFaqs] = await Promise.all([
+    getMergedCourses(),
+    getHomepageFaqs(homepageFaqFallback),
+  ]);
 
-export default function HomePage() {
   return (
     <>
       <Hero />
       <StatsSection />
       <WhyDigitalAI />
       <CategoryGrid />
-      <CourseGrid />
+      <CourseGrid courses={courses} />
       <PricingPreview />
       <PlacementPartners />
       <StudentSuccessStories />
@@ -40,7 +35,7 @@ export default function HomePage() {
       <LearningJourney />
       <SkillStack />
       <ReviewsSection />
-      <HomepageFAQSection />
+      <HomeFAQSection faqs={homeFaqs} />
       <CTASection
         headline="Still Confused About Your Career?"
         text="Free career guidance, course recommendation and placement consultation — talk to a learning counsellor today."

@@ -9,11 +9,11 @@ export interface FAQItem {
   answer: string;
 }
 
-export default function FAQAccordion({ items, light = false }: { items: FAQItem[]; light?: boolean }) {
+export default function FAQAccordion({ items }: { items: FAQItem[] }) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div className={light ? 'card-light divide-y divide-[#0B1020]/8 rounded-2xl' : 'divide-y divide-white/8 rounded-2xl border border-white/8 bg-ink-900'}>
+    <div className="divide-y divide-white/8 rounded-2xl border border-white/8 bg-ink-900">
       {items.map((item, i) => (
         <div key={item.question}>
           <button
@@ -22,7 +22,7 @@ export default function FAQAccordion({ items, light = false }: { items: FAQItem[
             aria-expanded={open === i}
           >
             <span className="font-display text-sm font-semibold sm:text-base">{item.question}</span>
-            <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${light ? 'text-[#55607A]' : 'text-mist'} ${open === i ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 shrink-0 text-mist transition-transform ${open === i ? 'rotate-180' : ''}`} />
           </button>
           <AnimatePresence initial={false}>
             {open === i && (
@@ -33,7 +33,7 @@ export default function FAQAccordion({ items, light = false }: { items: FAQItem[
                 transition={{ duration: 0.15, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <p className={`px-6 pb-5 text-sm leading-relaxed ${light ? 'text-[#55607A]' : 'text-mist'}`}>{item.answer}</p>
+                <p className="px-6 pb-5 text-sm leading-relaxed text-mist">{item.answer}</p>
               </motion.div>
             )}
           </AnimatePresence>

@@ -1,12 +1,11 @@
-import { buildMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 import RevealSection from '@/components/RevealSection';
 import TestimonialCarousel from '@/components/TestimonialCarousel';
 
-export const metadata = buildMetadata({
+export const metadata: Metadata = {
   title: 'Student Reviews',
   description: 'Read what students say about learning with DigitalAI Learning Institute.',
-  path: '/reviews',
-});
+};
 
 // PLACEHOLDER TESTIMONIALS — clearly marked for replacement with real, consented
 // student reviews before publishing. Do not publish these as real reviews.

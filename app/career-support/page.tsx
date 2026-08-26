@@ -1,13 +1,12 @@
-import { buildMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 import { Compass, FileText, Briefcase, Linkedin, Mic, Users2, FolderCheck, MessageSquareHeart, Search } from 'lucide-react';
 import RevealSection from '@/components/RevealSection';
 import CTASection from '@/components/CTASection';
 
-export const metadata = buildMetadata({
+export const metadata: Metadata = {
   title: 'Career Support',
   description: 'Resume building, portfolio development, interview preparation and career guidance for DigitalAI Learning Institute students.',
-  path: '/career-support',
-});
+};
 
 const items = [
   { icon: Compass, title: 'Career Roadmap', text: 'A clear, personalized path from where you are to where you want to be.' },

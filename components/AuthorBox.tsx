@@ -8,11 +8,11 @@ export default function AuthorBox({ author }: { author: BlogAuthor }) {
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-ink-900 p-6 sm:flex-row sm:items-start">
       <img
-        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author.avatarSeed}`}
+        src={author.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.avatarSeed}`}
         alt=""
         aria-hidden="true"
         loading="lazy"
-        className="h-16 w-16 shrink-0 rounded-full bg-white/5"
+        className="h-16 w-16 shrink-0 rounded-full bg-white/5 object-cover"
       />
       <div>
         <p className="font-display text-sm font-semibold">{author.name}</p>

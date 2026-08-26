@@ -7,7 +7,7 @@ export const siteConfig = {
     name: 'DigitalAI Learning Institute',
     shortName: 'DigitalAI Learning',
     tagline: 'Learn Digital. Master AI. Build Your Future.',
-    domain: process.env.NEXT_PUBLIC_SITE_URL || 'https://digitalai-learning-institute-alpha.vercel.app',
+    domain: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.digitalailearning.example',
   },
 
   // Business model: ONLINE + OFFLINE — DigitalAI now has a physical centre in Noida.
@@ -35,7 +35,7 @@ export const siteConfig = {
 
   analytics: {
     ga4Id: process.env.NEXT_PUBLIC_GA4_ID || '', // TODO: set in .env, do not hardcode
-    gtmId: process.env.NEXT_PUBLIC_GTM_ID || '',
+    gtmId: process.env.NEXT_PUBLIC_GTM_ID || 'GTM-NQQG8RB9',
     metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID || '',
     googleAdsId: process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || '',
   },

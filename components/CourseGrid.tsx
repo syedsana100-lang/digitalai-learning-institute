@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { categoryMeta, getAllCourses, type CourseCategory } from '@/lib/courses-data';
+import { categoryMeta, getAllCourses, type Course, type CourseCategory } from '@/lib/courses-data';
 import CourseCard from '@/components/CourseCard';
 import RevealSection from '@/components/RevealSection';
 
@@ -10,9 +10,10 @@ const tabs: { label: string; value: CourseCategory | 'all' }[] = [
   ...(Object.entries(categoryMeta).map(([value, meta]) => ({ label: meta.label, value: value as CourseCategory }))),
 ];
 
-export default function CourseGrid() {
+export default function CourseGrid({ courses: coursesProp }: { courses?: Course[] } = {}) {
   const [active, setActive] = useState<CourseCategory | 'all'>('all');
-  const courses = getAllCourses().filter((c) => active === 'all' || c.category === active);
+  const allCourses = coursesProp ?? getAllCourses();
+  const courses = allCourses.filter((c) => active === 'all' || c.category === active);
 
   return (
     <section className="section-light py-20">

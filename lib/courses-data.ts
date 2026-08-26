@@ -41,14 +41,11 @@ export interface Course {
   projects: string[];
   instructorId: string;
   faqs: CourseFAQ[];
-  whyLearn: string; // "Why Learn This Course" paragraph
-  careerOpportunities: string[]; // job roles this course prepares students for
-  industryDemand: string; // directional, non-numeric framing — no invented stats
-  careerRoadmap: string[]; // step-by-step path from enrolling to job-ready
   seo: {
     title: string;
     description: string;
   };
+  heroImageUrl?: string; // set when the course comes from Sanity with a hero image
 }
 
 export const categoryMeta: Record<CourseCategory, { label: string; description: string }> = {
@@ -100,18 +97,6 @@ export const courses: Course[] = [
       { question: 'Do I need a coding background?', answer: 'No — the program starts from Python fundamentals before moving into AI concepts.' },
       { question: 'Is this course live or recorded?', answer: 'Both — you attend live online sessions and get recordings for review.' },
     ],
-    whyLearn:
-      'AI is moving from a specialist skill to a baseline expectation across software, data, marketing and operations roles. Learning practical AI — not just the theory — means you can build, evaluate and ship models rather than only talk about them, which is what separates job-ready candidates from casual learners.',
-    careerOpportunities: ['AI/ML Engineer', 'Machine Learning Associate', 'AI Product Analyst', 'Applied AI Developer', 'Generative AI Engineer'],
-    industryDemand:
-      'Demand for applied AI skills has grown steadily across Indian tech, product and services companies as more teams adopt AI tooling in their workflows — this program focuses on the practical, applied skills employers are actually screening for, rather than academic theory alone.',
-    careerRoadmap: [
-      'Enroll and complete the Python + statistics foundations module',
-      'Build core machine learning skills through guided exercises',
-      'Work hands-on with neural networks and generative AI tools',
-      'Complete a capstone project you can show in interviews',
-      'Get resume, portfolio and interview preparation support',
-    ],
     seo: {
       title: 'Artificial Intelligence Course Online | DigitalAI Learning Institute',
       description: 'Learn Artificial Intelligence online with practical projects, live mentorship and career support — open to students across India.',
@@ -151,18 +136,6 @@ export const courses: Course[] = [
     instructorId: 'instr-002',
     faqs: [
       { question: 'What tools will I learn?', answer: 'Python, SQL, Pandas and Power BI, among the core tools used throughout the program.' },
-    ],
-    whyLearn:
-      'Data-driven decision-making has become standard practice across nearly every industry, from e-commerce to healthcare to finance. This program is built to get you comfortable working with real, messy data — not clean textbook datasets — so what you learn transfers directly to a job.',
-    careerOpportunities: ['Data Analyst', 'Junior Data Scientist', 'Business Intelligence Analyst', 'Reporting & Insights Analyst', 'Data Science Associate'],
-    industryDemand:
-      'Companies across sectors continue to invest in data teams as they look to make decisions backed by evidence rather than intuition — this program is built around the analytical and communication skills that make data professionals genuinely useful to a business.',
-    careerRoadmap: [
-      'Enroll and build your Python and statistics foundation',
-      'Learn data wrangling and SQL for real-world datasets',
-      'Apply machine learning techniques to business problems',
-      'Build dashboards and visualizations that communicate insights clearly',
-      'Complete a business case-study capstone and get career support',
     ],
     seo: {
       title: 'Data Science Course Online | DigitalAI Learning Institute',
@@ -204,18 +177,6 @@ export const courses: Course[] = [
     faqs: [
       { question: 'Will I build real projects?', answer: 'Yes — the program is structured around building and deploying complete applications.' },
     ],
-    whyLearn:
-      'Full stack developers who can move comfortably between frontend, backend and deployment are consistently valuable to both startups and larger engineering teams, because they can own a feature end to end instead of waiting on handoffs between specialists.',
-    careerOpportunities: ['Full Stack Developer', 'Frontend Developer', 'Backend Developer', 'Software Engineer', 'Web Application Developer'],
-    industryDemand:
-      'Web application development remains one of the most consistently in-demand technical skill sets in Indian tech hiring, spanning startups, product companies and IT services alike — this program is built around the modern JavaScript stack most teams are actually using.',
-    careerRoadmap: [
-      'Enroll and build your HTML, CSS and JavaScript foundation',
-      'Learn React and frontend state management',
-      'Build backend APIs and work with databases using Node.js',
-      'Learn Git and deployment workflows used in real teams',
-      'Ship a full stack capstone application and get career support',
-    ],
     seo: {
       title: 'Full Stack Development Course Online | DigitalAI Learning Institute',
       description: 'Learn Full Stack Development online with live projects and mentorship, open to students across India.',
@@ -255,18 +216,6 @@ export const courses: Course[] = [
     instructorId: 'instr-004',
     faqs: [
       { question: 'Do I get to run real ad campaigns?', answer: 'You work on live-style campaign simulations and case studies using industry tools.' },
-    ],
-    whyLearn:
-      'Every business with an online presence needs someone who understands how to reach the right audience efficiently. Digital marketing skills are practical and immediately applicable, whether you want to work in-house, at an agency, or freelance.',
-    careerOpportunities: ['Digital Marketing Executive', 'SEO Specialist', 'Performance Marketing Associate', 'Social Media Marketer', 'Marketing Analyst'],
-    industryDemand:
-      'As more businesses shift ad spend online, demand for people who can plan, execute and measure digital campaigns has grown steadily — this program is built around the tools and platforms marketing teams use day to day.',
-    careerRoadmap: [
-      'Enroll and build your marketing fundamentals and funnel knowledge',
-      'Learn on-page SEO and content strategy',
-      'Run simulated Google Ads and Meta Ads campaigns',
-      'Learn to read and act on Google Analytics data',
-      'Complete a campaign project and get career support',
     ],
     seo: {
       title: 'Digital Marketing Course Online | DigitalAI Learning Institute',
@@ -309,18 +258,6 @@ export const courses: Course[] = [
       { question: 'Do I need prior IT experience?', answer: 'No — the program builds up from networking and security fundamentals before moving into hands-on labs.' },
       { question: 'Will I get hands-on lab practice?', answer: 'Yes, the program includes guided lab exercises using industry-standard security tools.' },
     ],
-    whyLearn:
-      'As more business operations move online, the need for people who can identify and respond to security risks has grown alongside it. This program focuses on practical, lab-based skills rather than certification theory alone, so you leave able to actually do the work.',
-    careerOpportunities: ['Security Analyst', 'SOC Analyst (Entry Level)', 'Junior Penetration Tester', 'IT Security Associate', 'Vulnerability Analyst'],
-    industryDemand:
-      'Organizations across sectors continue to invest in security teams as digital operations expand and threats evolve — this program is built around the foundational, hands-on skills most entry-level security roles actually require.',
-    careerRoadmap: [
-      'Enroll and build your networking and security fundamentals',
-      'Learn system and network security hardening',
-      'Practice vulnerability assessment and penetration testing basics',
-      'Get hands-on with Wireshark, Kali Linux and SIEM basics',
-      'Complete a lab-based capstone and get career support',
-    ],
     seo: {
       title: 'Cyber Security Course Online | DigitalAI Learning Institute',
       description: 'Learn Cyber Security online with hands-on labs, live mentorship and career support — open to students across India.',
@@ -328,14 +265,14 @@ export const courses: Course[] = [
   },
 ];
 
-export function getAllCourses() {
-  return courses;
+export function getAllCourses(list: Course[] = courses) {
+  return list;
 }
 
-export function getCourseBySlug(slug: string) {
-  return courses.find((c) => c.slug === slug) || null;
+export function getCourseBySlug(slug: string, list: Course[] = courses) {
+  return list.find((c) => c.slug === slug) || null;
 }
 
-export function getCoursesByCategory(category: CourseCategory) {
-  return courses.filter((c) => c.category === category);
+export function getCoursesByCategory(category: CourseCategory, list: Course[] = courses) {
+  return list.filter((c) => c.category === category);
 }

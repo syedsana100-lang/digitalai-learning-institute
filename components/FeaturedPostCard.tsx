@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, Clock } from 'lucide-react';
 import type { BlogPost } from '@/lib/blog-data';
-import { calculateReadTime } from '@/lib/blog-data';
+import { calculateReadTime, resolveBlogImageUrl } from '@/lib/blog-data';
 import { getAuthorById } from '@/lib/blog-authors-data';
 
 export default function FeaturedPostCard({ post }: { post: BlogPost }) {
@@ -14,7 +14,7 @@ export default function FeaturedPostCard({ post }: { post: BlogPost }) {
       className="focus-ring group grid overflow-hidden rounded-2xl border border-white/8 bg-ink-900 transition-colors hover:border-signal-blue/50 lg:grid-cols-2"
     >
       <img
-        src={`https://picsum.photos/seed/${post.featuredImage}/900/560`}
+        src={resolveBlogImageUrl(post.featuredImage, 900, 560)}
         alt={post.title}
         loading="lazy"
         className="aspect-[16/9] w-full object-cover lg:aspect-auto lg:h-full"

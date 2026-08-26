@@ -1,15 +1,16 @@
-import { buildMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 import CourseGrid from '@/components/CourseGrid';
 import RevealSection from '@/components/RevealSection';
+import { getMergedCourses } from '@/sanity/lib/content';
 
-export const metadata = buildMetadata({
+export const metadata: Metadata = {
   title: 'Online Courses',
   description:
     'Explore online technical and digital courses in AI, Data Science, Programming, Development, Digital Marketing, Cloud & Security and Design — open to students across India.',
-  path: '/courses',
-});
+};
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  const courses = await getMergedCourses();
   return (
     <div className="pt-16">
       <RevealSection className="mx-auto max-w-3xl px-5 text-center lg:px-8">
@@ -18,7 +19,7 @@ export default function CoursesPage() {
           Practical, career-focused online programs — learn from anywhere in India.
         </p>
       </RevealSection>
-      <CourseGrid />
+      <CourseGrid courses={courses} />
     </div>
   );
 }

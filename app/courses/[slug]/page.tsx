@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Clock, Signal, Laptop, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { getAllCourses, getCourseBySlug, categoryMeta } from '@/lib/courses-data';
+import { getCourseBySlug, categoryMeta } from '@/lib/courses-data';
 import { getInstructorById } from '@/lib/instructors-data';
+import { getMergedCourses } from '@/sanity/lib/content';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CurriculumAccordion from '@/components/CurriculumAccordion';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -11,13 +12,15 @@ import CTASection from '@/components/CTASection';
 import RevealSection from '@/components/RevealSection';
 import { siteConfig } from '@/lib/site-config';
 
-export function generateStaticParams() {
-  return getAllCourses().map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  const courses = await getMergedCourses();
+  return courses.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const courses = await getMergedCourses();
+  const course = getCourseBySlug(slug, courses);
   if (!course) return {};
   return {
     title: course.seo.title,
@@ -29,7 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const courses = await getMergedCourses();
+  const course = getCourseBySlug(slug, courses);
   if (!course) notFound();
 
   const instructor = getInstructorById(course.instructorId);
@@ -65,6 +69,14 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-5 py-12 lg:px-8">
         <RevealSection>
+          {course.heroImageUrl && (
+            <img
+              src={course.heroImageUrl}
+              alt={course.title}
+              loading="eager"
+              className="mb-8 aspect-[16/9] w-full rounded-2xl border border-white/8 object-cover"
+            />
+          )}
           <p className="text-xs font-medium uppercase tracking-wide text-signal-cyan">
             {categoryMeta[course.category].label}
           </p>
@@ -118,32 +130,6 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         </RevealSection>
       </section>
 
-      {/* Why Learn This Course */}
-      <section className="mx-auto max-w-4xl px-5 pb-14 lg:px-8">
-        <RevealSection>
-          <h2 className="mb-3 font-display text-2xl font-bold">Why Learn {course.title}?</h2>
-          <p className="text-sm leading-relaxed text-mist sm:text-base">{course.whyLearn}</p>
-        </RevealSection>
-      </section>
-
-      {/* Career Opportunities + Industry Demand */}
-      <section className="mx-auto grid max-w-4xl gap-8 px-5 pb-14 sm:grid-cols-2 lg:px-8">
-        <RevealSection>
-          <h2 className="mb-4 font-display text-lg font-semibold">Career Opportunities</h2>
-          <ul className="space-y-2.5">
-            {course.careerOpportunities.map((role) => (
-              <li key={role} className="flex items-start gap-2 text-sm text-mist">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-signal-cyan" /> {role}
-              </li>
-            ))}
-          </ul>
-        </RevealSection>
-        <RevealSection delay={0.1}>
-          <h2 className="mb-4 font-display text-lg font-semibold">Industry Demand</h2>
-          <p className="text-sm leading-relaxed text-mist">{course.industryDemand}</p>
-        </RevealSection>
-      </section>
-
       {/* Curriculum */}
       <section className="mx-auto max-w-4xl px-5 py-14 lg:px-8">
         <RevealSection className="mb-6">
@@ -159,23 +145,6 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {course.projects.map((p) => (
               <div key={p} className="rounded-2xl border border-white/8 bg-ink-900 p-5 text-sm text-mist">{p}</div>
-            ))}
-          </div>
-        </RevealSection>
-      </section>
-
-      {/* Career Roadmap */}
-      <section className="mx-auto max-w-4xl px-5 pb-14 lg:px-8">
-        <RevealSection>
-          <h2 className="mb-5 font-display text-2xl font-bold">Your Career Roadmap</h2>
-          <div className="space-y-3">
-            {course.careerRoadmap.map((step, i) => (
-              <div key={step} className="flex items-start gap-4 rounded-xl border border-white/8 bg-ink-900 p-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-signal-blue to-signal-violet font-mono text-xs font-bold">
-                  {i + 1}
-                </span>
-                <p className="text-sm text-mist">{step}</p>
-              </div>
             ))}
           </div>
         </RevealSection>

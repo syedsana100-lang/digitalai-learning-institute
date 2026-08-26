@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Clock, Signal, Briefcase } from 'lucide-react';
+import { ArrowUpRight, Clock, Signal } from 'lucide-react';
 import type { Course } from '@/lib/courses-data';
 import { categoryMeta } from '@/lib/courses-data';
 
@@ -18,15 +18,8 @@ export default function CourseCard({ course }: { course: Course }) {
         {categoryMeta[course.category].label}
       </p>
       <h3 className="mt-2 font-display text-lg font-semibold">{course.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-mist">{course.shortDescription}</p>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-mist">{course.shortDescription}</p>
 
-      {course.careerOpportunities?.[0] && (
-        <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-signal-cyan">
-          <Briefcase className="h-3.5 w-3.5" /> Become a {course.careerOpportunities[0]}
-        </p>
-      )}
-
-      <div className="mt-4 flex-1" />
       <div className="mt-4 flex flex-wrap gap-3 text-xs text-mist">
         <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {course.durationLabel}</span>
         <span className="flex items-center gap-1"><Signal className="h-3.5 w-3.5" /> {course.level}</span>

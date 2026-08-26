@@ -1,15 +1,14 @@
-import { buildMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 import { Mail, Phone, MapPin, MessageCircle, UserCheck, ClipboardList, GraduationCap, CalendarCheck } from 'lucide-react';
 import CounsellingForm from '@/components/CounsellingForm';
 import FAQAccordion from '@/components/FAQAccordion';
 import RevealSection from '@/components/RevealSection';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata = buildMetadata({
+export const metadata: Metadata = {
   title: 'Contact & Free Counselling',
   description: 'Get in touch with DigitalAI Learning Institute — call, WhatsApp, email, or book a free learning counselling session.',
-  path: '/contact',
-});
+};
 
 const whatsappHref = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(siteConfig.contact.whatsappDefaultMessage)}`;
 

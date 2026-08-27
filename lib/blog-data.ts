@@ -11,6 +11,7 @@ export const allCategories: BlogCategory[] = [
 // formatting (headings, lists, quotes, code) — replace `text`/`items` with real,
 // original content before publishing. Every h2/h3 block auto-appears in the TOC.
 export type ContentBlock =
+ export type ContentBlock =
   | { type: 'p'; text: string }
   | { type: 'h2'; text: string; id: string }
   | { type: 'h3'; text: string; id: string }
@@ -18,7 +19,8 @@ export type ContentBlock =
   | { type: 'ol'; items: string[] }
   | { type: 'quote'; text: string }
   | { type: 'code'; text: string; language?: string }
-  | { type: 'links'; intro?: string; items: { label: string; href: string }[] };
+  | { type: 'links'; intro?: string; items: { label: string; href: string }[] }
+  | { type: 'image'; src: string; alt?: string; caption?: string };
 
 export interface BlogPost {
   slug: string;

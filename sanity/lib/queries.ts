@@ -124,6 +124,10 @@ function toCourse(doc: Record<string, unknown>): Course {
     projects: (doc.projects as string[]) || [],
     instructorId: String(doc.instructorName || ''),
     faqs: (doc.faqs as Course['faqs']) || [],
+    whyLearn: String(doc.whyLearn || ''),
+careerOpportunities: (doc.careerOpportunities as string[]) || [],
+industryDemand: String(doc.industryDemand || ''),
+careerRoadmap: (doc.careerRoadmap as string[]) || [],
     seo: {
       title: String((doc.seo as Record<string, unknown> | undefined)?.metaTitle || doc.title),
       description: String((doc.seo as Record<string, unknown> | undefined)?.metaDescription || doc.shortDescription || ''),

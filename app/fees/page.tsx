@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
 import { Check, X } from 'lucide-react';
 import { pricingPlans, comparisonRows } from '@/lib/pricing-data';
@@ -88,6 +89,17 @@ export default function FeesPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-5 pb-6 text-center lg:px-8">
+        <RevealSection>
+          <p className="text-sm text-mist">
+            Already decided on a plan?{' '}
+            <Link href="/payment" className="font-semibold text-signal-blue underline">
+              Proceed to Payment
+            </Link>
+          </p>
+        </RevealSection>
       </section>
 
       <CTASection

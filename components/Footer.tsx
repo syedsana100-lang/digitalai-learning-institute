@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Linkedin, Instagram, Youtube, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { siteConfig } from '@/lib/site-config';
@@ -54,9 +55,12 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <p className="font-display text-lg font-extrabold">
-              Digital<span className="text-gradient">AI</span> Learning Institute
-            </p>
+            <Link href="/" className="focus-ring flex items-center gap-2.5" aria-label="DigitalAI Learning Institute — Home">
+              <Image src="/images/logo.png" alt="DigitalAI Learning Institute logo" width={36} height={34} className="h-9 w-auto" />
+              <span className="font-display text-lg font-extrabold">
+                Digital<span className="text-gradient">AI</span> Learning Institute
+              </span>
+            </Link>
             <p className="mt-3 max-w-xs text-sm text-mist">{siteConfig.brand.tagline}</p>
 
             <div className="mt-5 space-y-2 text-sm text-mist">

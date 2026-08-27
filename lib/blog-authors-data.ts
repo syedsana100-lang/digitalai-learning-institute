@@ -1,19 +1,10 @@
 export interface BlogAuthor {
-
   id: string;
-
   name: string;
-
   designation: string;
-
   bio: string;
-
   avatarSeed: string;
-
-  avatarUrl?: string;
-
   social?: { linkedin?: string; twitter?: string };
-
 }
 
 export const blogAuthors: BlogAuthor[] = [

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Menu, Phone } from 'lucide-react';
@@ -39,8 +40,18 @@ export default function Header() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 lg:px-8">
-          <Link href="/" className="font-display text-lg font-extrabold tracking-tight focus-ring">
-            Digital<span className="text-gradient">AI</span> Learning
+          <Link href="/" className="focus-ring flex items-center gap-2.5" aria-label="DigitalAI Learning Institute — Home">
+            <Image
+              src="/images/logo.png"
+              alt="DigitalAI Learning Institute logo"
+              width={40}
+              height={38}
+              priority
+              className="h-9 w-auto sm:h-10"
+            />
+            <span className="font-display text-base font-extrabold tracking-tight sm:text-lg">
+              Digital<span className="text-gradient">AI</span> Learning
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex">

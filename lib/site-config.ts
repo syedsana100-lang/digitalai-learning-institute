@@ -21,6 +21,7 @@ export const siteConfig = {
       'Hi DigitalAI Learning Institute, I would like to know more about your courses.',
     businessHours: 'Mon–Sat, 10:00 AM – 7:00 PM IST', // TODO: confirm
     address: 'Noida, Uttar Pradesh, India', // TODO: replace with full street address
+    upiId: process.env.NEXT_PUBLIC_UPI_ID || 'kotak2025@ybl',
     mapEmbedUrl:
       process.env.NEXT_PUBLIC_MAP_EMBED_URL ||
       'https://www.google.com/maps?q=Noida,Uttar+Pradesh,India&output=embed',

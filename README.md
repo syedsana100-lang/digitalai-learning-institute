@@ -353,3 +353,40 @@ course's actual curriculum and audience.
 
 No fabricated stats, salary figures, guarantees, or fake partner logos were
 added anywhere — every course's FAQ explicitly states there's no job guarantee.
+
+## Logo, QR Code & UPI Payment Update (2026-08-27)
+
+### Logo
+- Real logo (`final_logo1.png`) processed: white background removed (made
+  transparent), cropped to content bounding box, resized from 8000×6901 to a
+  web-friendly 900×846 — saved as `public/images/logo.png`
+- Added to Header (desktop + mobile menu) and Footer, all via `next/image`,
+  all clickable through to `/`, aspect ratio preserved throughout
+
+### UPI Payment (`/payment`)
+- Real QR code (`qr-payment.jpeg`) processed: cropped from 847×1600 (which
+  included PhonePe branding, a name label, and copyright text) down to just
+  the 636×635 scannable QR square with a safe quiet-zone margin — saved as
+  `public/images/payment-qr.png`. QR pattern itself was never modified, only cropped.
+- Real UPI ID (`kotak2025@ybl`) wired into `lib/site-config.ts` as
+  `siteConfig.contact.upiId` (overridable via `NEXT_PUBLIC_UPI_ID` env var)
+- New `components/UpiPaymentSection.tsx` (client component): shows the QR,
+  the UPI ID with a working Copy-to-clipboard button (shows "UPI ID copied
+  successfully"), and a "Pay Using Any UPI App" button using the standard
+  `upi://pay?pa=...` deep link (opens the user's UPI app on mobile; desktop
+  users are told to scan the QR instead)
+- Card/Netbanking via Razorpay remains **not connected** (no credentials
+  provided) — the page shows a small honest notice instead of pretending it
+  works
+
+### Payment CTAs added (only where they logically fit)
+- Course detail pages: new "Already Decided? Proceed to Payment" button next
+  to the existing "Enquire Now" button in the Fees section
+- `/fees` page: "Proceed to Payment" link added below the comparison table
+- Footer "Pay Fees" link (already existed from an earlier pass) — confirmed
+  working
+
+**Deliberately NOT linked to `/payment`:** the header's global "Enroll Now"
+CTA (routes to counselling — a visitor hasn't chosen a course or fee yet) and
+the counselling form's success message (same reason — payment before
+counselling would be premature since fees are "Contact for Current Fees").

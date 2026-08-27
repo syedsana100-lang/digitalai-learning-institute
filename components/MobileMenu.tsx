@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -27,7 +28,8 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
           className="fixed inset-0 z-[60] bg-ink-950/98 backdrop-blur-lg lg:hidden"
         >
           <div className="flex items-center justify-between px-5 py-4">
-            <span className="font-display text-lg font-extrabold">
+            <span className="flex items-center gap-2.5 font-display text-lg font-extrabold">
+              <Image src="/images/logo.png" alt="" width={32} height={30} className="h-8 w-auto" aria-hidden="true" />
               Digital<span className="text-gradient">AI</span> Learning
             </span>
             <button aria-label="Close menu" onClick={onClose} className="focus-ring rounded-md p-2">

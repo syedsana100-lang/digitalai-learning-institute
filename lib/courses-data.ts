@@ -45,9 +45,6 @@ export interface Course {
   careerOpportunities: string[]; // job roles this course prepares students for
   industryDemand: string; // directional, non-numeric framing — no invented stats
   careerRoadmap: string[]; // step-by-step path from enrolling to job-ready
-  
-  heroImageUrl?: string;
-  
   seo: {
     title: string;
     description: string;

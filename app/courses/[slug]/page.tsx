@@ -262,9 +262,14 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               </p>
               <p className="mt-1 text-xs text-mist">EMI options available • See full <Link href="/fees" className="underline">fee comparison</Link></p>
             </div>
-            <Link href="/contact#counselling" className="focus-ring rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-6 py-3 text-sm font-semibold shadow-glow">
-              Enquire Now
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/contact#counselling" className="focus-ring rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-6 py-3 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.02] active:scale-95">
+                Enquire Now
+              </Link>
+              <Link href="/payment" className="focus-ring rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition-all duration-150 hover:bg-white/5 active:scale-95">
+                Already Decided? Proceed to Payment
+              </Link>
+            </div>
           </div>
         </RevealSection>
       </section>

@@ -4,7 +4,6 @@ export interface BlogAuthor {
   designation: string;
   bio: string;
   avatarSeed: string;
-  avatarUrl?: string; // set when the author comes from Sanity (real photo) instead of a placeholder
   social?: { linkedin?: string; twitter?: string };
 }
 

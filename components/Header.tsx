@@ -14,6 +14,7 @@ const navLinks = [
   { label: 'About Us', href: '/about' },
   { label: 'Placement', href: '/career-support' },
   { label: 'Reviews', href: '/reviews' },
+  { label: 'Gallery', href: '/gallery' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ];

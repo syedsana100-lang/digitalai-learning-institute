@@ -7,7 +7,7 @@ const stats = [
   { value: 10, suffix: '+', label: 'Career-Focused Programs' },
   { value: 100, suffix: '+', label: 'Practical Learning Topics' },
   { value: null, display: 'Project-Based', label: 'Learning Approach' },
-  { value: null, display: '[XX]%', label: 'Placement Support (update once available)' },
+  { value: null, display: 'Online + Offline', label: 'Learning Across India' },
 ];
 
 function Counter({ value, suffix }: { value: number; suffix: string }) {

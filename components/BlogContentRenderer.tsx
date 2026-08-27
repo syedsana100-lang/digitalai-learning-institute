@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { ContentBlock } from '@/lib/blog-data';
 
 export default function BlogContentRenderer({ blocks }: { blocks: ContentBlock[] }) {
@@ -43,24 +44,19 @@ export default function BlogContentRenderer({ blocks }: { blocks: ContentBlock[]
                 <code>{block.text}</code>
               </pre>
             );
-          case 'image':
+          case 'links':
             return (
-              <figure key={i}>
-                <img src={block.src} alt={block.alt} loading="lazy" className="w-full rounded-xl border border-white/8 object-cover" />
-                {block.caption && <figcaption className="mt-2 text-center text-xs text-mist">{block.caption}</figcaption>}
-              </figure>
-            );
-          case 'youtube':
-            return (
-              <div key={i} className="aspect-video w-full overflow-hidden rounded-xl border border-white/8">
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${block.videoId}`}
-                  title={block.title}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
+              <div key={i} className="rounded-xl border border-white/8 bg-ink-900 p-5">
+                {block.intro && <p className="mb-3 text-sm font-semibold text-paper">{block.intro}</p>}
+                <ul className="space-y-2">
+                  {block.items.map((item) => (
+                    <li key={item.href}>
+                      <Link href={item.href} className="focus-ring text-sm font-medium text-signal-cyan hover:underline">
+                        {item.label} →
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             );
           default:

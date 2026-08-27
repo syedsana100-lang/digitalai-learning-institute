@@ -1,20 +1,35 @@
 import Script from 'next/script';
+import { siteConfig } from '@/lib/site-config';
 
-export function GTMScript({ gtmId }: { gtmId: string }) {
+/**
+ * Google Tag Manager — standard Next.js App Router implementation.
+ * Renders nothing if NEXT_PUBLIC_GTM_ID isn't set, so no placeholder/fake
+ * container ID ever ships. Uses `next/script` with `afterInteractive`
+ * (Next.js's documented recommendation for GTM) rather than a raw <script>
+ * tag, and is rendered exactly once from the root layout — never per-page —
+ * so there is no risk of duplicate GTM containers loading.
+ */
+export function GoogleTagManagerScript() {
+  const gtmId = siteConfig.analytics.gtmId;
   if (!gtmId) return null;
+
   return (
-    <Script
-      id="gtm-script"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{
-        __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`,
-      }}
-    />
+    <Script id="gtm-init" strategy="afterInteractive">
+      {`
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','${gtmId}');
+      `}
+    </Script>
   );
 }
 
-export function GTMNoScript({ gtmId }: { gtmId: string }) {
+export function GoogleTagManagerNoScript() {
+  const gtmId = siteConfig.analytics.gtmId;
   if (!gtmId) return null;
+
   return (
     <noscript>
       <iframe
@@ -22,7 +37,7 @@ export function GTMNoScript({ gtmId }: { gtmId: string }) {
         height="0"
         width="0"
         style={{ display: 'none', visibility: 'hidden' }}
-        title="gtm"
+        title="Google Tag Manager"
       />
     </noscript>
   );

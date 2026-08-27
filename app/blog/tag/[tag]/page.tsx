@@ -2,15 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getAllTags, getPostsByTag } from '@/lib/blog-data';
-import { getMergedBlogPosts } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 import { notFound } from 'next/navigation';
 
-export async function generateStaticParams() {
-  const posts = await getMergedBlogPosts();
-  return getAllTags(posts).map((t) => ({ tag: t.toLowerCase() }));
+export function generateStaticParams() {
+  return getAllTags().map((t) => ({ tag: t.toLowerCase() }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {
@@ -26,12 +24,11 @@ export async function generateMetadata({ params }: { params: Promise<{ tag: stri
 export default async function BlogTagPage({ params }: { params: Promise<{ tag: string }> }) {
   const { tag } = await params;
   const decoded = decodeURIComponent(tag);
-  const posts = await getMergedBlogPosts();
-  const allTags = getAllTags(posts);
+  const allTags = getAllTags();
   const realTag = allTags.find((t) => t.toLowerCase() === decoded.toLowerCase());
   if (!realTag) notFound();
 
-  const taggedPosts = getPostsByTag(realTag, posts);
+  const posts = getPostsByTag(realTag);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -58,12 +55,12 @@ export default async function BlogTagPage({ params }: { params: Promise<{ tag: s
 
       <RevealSection className="mx-auto max-w-3xl px-5 py-10 text-center lg:px-8">
         <h1 className="font-display text-4xl font-extrabold lg:text-5xl">#{realTag}</h1>
-        <p className="mt-4 text-mist">{taggedPosts.length} article{taggedPosts.length === 1 ? '' : 's'} tagged {realTag}.</p>
+        <p className="mt-4 text-mist">{posts.length} article{posts.length === 1 ? '' : 's'} tagged {realTag}.</p>
       </RevealSection>
 
       <section className="mx-auto max-w-6xl px-5 pb-14 lg:px-8">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {taggedPosts.map((post, i) => (
+          {posts.map((post, i) => (
             <RevealSection key={post.slug} delay={i * 0.05}>
               <BlogCard post={post} />
             </RevealSection>

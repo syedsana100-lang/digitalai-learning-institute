@@ -2,19 +2,19 @@
 
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { getAllPosts, getCategoriesInUse, type BlogCategory, type BlogPost } from '@/lib/blog-data';
+import { getAllPosts, getCategoriesInUse, type BlogCategory } from '@/lib/blog-data';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 
 const PAGE_SIZE = 6;
 
-export default function BlogSearchAndFilter({ posts: postsProp }: { posts?: BlogPost[] } = {}) {
+export default function BlogSearchAndFilter() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<BlogCategory | 'all'>('all');
   const [visible, setVisible] = useState(PAGE_SIZE);
 
-  const allPosts = postsProp ?? getAllPosts();
-  const categories = getCategoriesInUse(allPosts);
+  const categories = getCategoriesInUse();
+  const allPosts = getAllPosts();
 
   const filtered = useMemo(() => {
     return allPosts.filter((p) => {

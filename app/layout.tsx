@@ -5,7 +5,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
-import { GTMScript, GTMNoScript } from '@/components/GoogleTagManager';
+import { GoogleTagManagerScript, GoogleTagManagerNoScript } from '@/components/GoogleTagManager';
 import GTMRouteTracker from '@/components/GTMRouteTracker';
 import { siteConfig } from '@/lib/site-config';
 
@@ -46,16 +46,31 @@ const organizationSchema = {
   areaServed: 'IN',
 };
 
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: `${siteConfig.brand.name} — Noida Centre`,
+  image: `${siteConfig.brand.domain}/og-image.jpg`,
+  telephone: siteConfig.contact.phone,
+  email: siteConfig.contact.email,
+  address: { '@type': 'PostalAddress', addressLocality: 'Noida', addressRegion: 'Uttar Pradesh', addressCountry: 'IN' },
+  url: siteConfig.brand.domain,
+  priceRange: '₹₹',
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <head>
+        <GoogleTagManagerScript />
+      </head>
       <body className="bg-ink-950 text-paper font-body antialiased">
-        <GTMScript gtmId={siteConfig.analytics.gtmId} />
-        <GTMNoScript gtmId={siteConfig.analytics.gtmId} />
+        <GoogleTagManagerNoScript />
         <Suspense fallback={null}>
           <GTMRouteTracker />
         </Suspense>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
         <Header />
         <main>{children}</main>
         <Footer />

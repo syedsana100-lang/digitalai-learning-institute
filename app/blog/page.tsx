@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight, Clock, ChevronRight } from 'lucide-react';
-import { getFeaturedPost, getPopularPosts, getTrendingPosts, getLatestPosts, calculateReadTime, getCategoriesInUse, categoryToSlug, resolveBlogImageUrl } from '@/lib/blog-data';
-import { getMergedBlogPosts } from '@/sanity/lib/content';
+import { getAllPosts, getFeaturedPost, getPopularPosts, getTrendingPosts, getLatestPosts, calculateReadTime, getCategoriesInUse, categoryToSlug } from '@/lib/blog-data';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import FeaturedPostCard from '@/components/FeaturedPostCard';
@@ -16,13 +15,11 @@ export const metadata: Metadata = {
   openGraph: { title: 'DigitalAI Learning Blog', description: 'Practical articles on AI, data, development, digital marketing and career growth.', type: 'website' },
 };
 
-export default async function BlogPage() {
-  const posts = await getMergedBlogPosts();
-  const featured = getFeaturedPost(posts);
-  const trending = getTrendingPosts(featured.slug, 3, posts);
-  const popular = getPopularPosts(featured.slug, 3, posts);
-  const latest = getLatestPosts(featured.slug, 3, posts);
-  const categories = getCategoriesInUse(posts);
+export default function BlogPage() {
+  const featured = getFeaturedPost();
+  const trending = getTrendingPosts(featured.slug, 3);
+  const popular = getPopularPosts(featured.slug, 3);
+  const latest = getLatestPosts(featured.slug, 3);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -101,7 +98,7 @@ export default async function BlogPage() {
                 className="focus-ring group flex items-center gap-4 p-5 transition-colors hover:bg-white/[0.02]"
               >
                 <img
-                  src={resolveBlogImageUrl(post.featuredImage, 120, 90)}
+                  src={`https://picsum.photos/seed/${post.featuredImage}/120/90`}
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
@@ -122,7 +119,7 @@ export default async function BlogPage() {
       )}
 
       {/* Full searchable/filterable archive with pagination */}
-      <BlogSearchAndFilter posts={posts} />
+      <BlogSearchAndFilter />
 
       {/* Crawlable category links — real <a> tags so category pages are discoverable
           by search engine crawlers and tools like Screaming Frog, independent of the
@@ -131,7 +128,7 @@ export default async function BlogPage() {
         <RevealSection>
           <h2 className="mb-4 font-display text-lg font-semibold">Browse by Category</h2>
           <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
+            {getCategoriesInUse().map((c) => (
               <Link
                 key={c}
                 href={`/blog/category/${categoryToSlug(c)}`}

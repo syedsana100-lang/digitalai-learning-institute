@@ -22,6 +22,7 @@ const columns = [
       { label: 'About', href: '/about' },
       { label: 'Placement', href: '/career-support' },
       { label: 'Reviews', href: '/reviews' },
+      { label: 'Gallery', href: '/gallery' },
       { label: 'Blog', href: '/blog' },
       { label: 'Contact', href: '/contact' },
     ],
@@ -30,6 +31,7 @@ const columns = [
     title: 'Support',
     links: [
       { label: 'FAQs', href: '/faq' },
+      { label: 'Pay Fees', href: '/payment' },
       { label: 'Help Center', href: '/contact' },
       { label: 'Terms & Conditions', href: '/terms-and-conditions' },
       { label: 'Refund Policy', href: '/refund-policy' },

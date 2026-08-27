@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import { FileText, Map, ClipboardList, BookOpenCheck, Mic, Layers } from 'lucide-react';
 import RevealSection from '@/components/RevealSection';
 import CTASection from '@/components/CTASection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'Free Resources',
   description: 'Free guides, career roadmaps, cheat sheets and resources from DigitalAI Learning Institute.',
-};
+  path: '/resources',
+});
 
 const resources = [
   { icon: Map, title: 'Career Roadmaps', text: 'Step-by-step paths for AI, Data Science, Development and Marketing careers.' },

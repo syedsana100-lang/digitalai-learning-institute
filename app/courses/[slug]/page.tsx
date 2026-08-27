@@ -2,9 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Clock, Signal, Laptop, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { getCourseBySlug, categoryMeta } from '@/lib/courses-data';
+import { getAllCourses, getCourseBySlug, categoryMeta } from '@/lib/courses-data';
 import { getInstructorById } from '@/lib/instructors-data';
-import { getMergedCourses } from '@/sanity/lib/content';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CurriculumAccordion from '@/components/CurriculumAccordion';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -12,15 +11,13 @@ import CTASection from '@/components/CTASection';
 import RevealSection from '@/components/RevealSection';
 import { siteConfig } from '@/lib/site-config';
 
-export async function generateStaticParams() {
-  const courses = await getMergedCourses();
-  return courses.map((c) => ({ slug: c.slug }));
+export function generateStaticParams() {
+  return getAllCourses().map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const courses = await getMergedCourses();
-  const course = getCourseBySlug(slug, courses);
+  const course = getCourseBySlug(slug);
   if (!course) return {};
   return {
     title: course.seo.title,
@@ -32,8 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const courses = await getMergedCourses();
-  const course = getCourseBySlug(slug, courses);
+  const course = getCourseBySlug(slug);
   if (!course) notFound();
 
   const instructor = getInstructorById(course.instructorId);
@@ -69,14 +65,6 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-5 py-12 lg:px-8">
         <RevealSection>
-          {course.heroImageUrl && (
-            <img
-              src={course.heroImageUrl}
-              alt={course.title}
-              loading="eager"
-              className="mb-8 aspect-[16/9] w-full rounded-2xl border border-white/8 object-cover"
-            />
-          )}
           <p className="text-xs font-medium uppercase tracking-wide text-signal-cyan">
             {categoryMeta[course.category].label}
           </p>
@@ -100,6 +88,23 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         </RevealSection>
       </section>
 
+      {/* Quick Facts strip */}
+      <section className="border-y border-white/8 bg-ink-900">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 px-5 py-6 sm:grid-cols-4 lg:px-8">
+          {[
+            { label: 'Duration', value: course.durationLabel },
+            { label: 'Learning Mode', value: course.deliveryLabel },
+            { label: 'Certification', value: 'DigitalAI Certificate' },
+            { label: 'Eligibility', value: course.level === 'Beginner' ? 'No prior experience needed' : `${course.level} level` },
+          ].map((f) => (
+            <div key={f.label} className="text-center">
+              <p className="font-display text-sm font-semibold">{f.value}</p>
+              <p className="mt-0.5 text-xs text-mist">{f.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Learning outcomes + eligibility */}
       <section className="mx-auto grid max-w-4xl gap-8 px-5 py-6 sm:grid-cols-2 lg:px-8">
         <RevealSection>
@@ -121,12 +126,53 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               </li>
             ))}
           </ul>
-          <h3 className="mt-6 font-display text-sm font-semibold text-mist">Tools & Technologies</h3>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {course.technologies.map((t) => (
-              <span key={t} className="rounded-full border border-white/10 px-2.5 py-0.5 text-[11px] text-mist">{t}</span>
+        </RevealSection>
+      </section>
+
+      {/* Tools & Technologies You'll Master */}
+      <section className="section-light py-14">
+        <div className="mx-auto max-w-4xl px-5 lg:px-8">
+          <RevealSection className="mb-8 text-center">
+            <h2 className="font-display text-2xl font-bold">Tools & Technologies You&apos;ll Master</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-mist">
+              Hands-on training with real, industry-standard tools — not just theory.
+            </p>
+          </RevealSection>
+          <div className="flex flex-wrap justify-center gap-3">
+            {course.technologies.map((t, i) => (
+              <RevealSection key={t} delay={i * 0.04}>
+                <span className="card-light inline-block rounded-full px-5 py-2.5 text-sm font-medium">
+                  {t}
+                </span>
+              </RevealSection>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Why Learn This Course */}
+      <section className="mx-auto max-w-4xl px-5 pb-14 lg:px-8">
+        <RevealSection>
+          <h2 className="mb-3 font-display text-2xl font-bold">Why Learn {course.title}?</h2>
+          <p className="text-sm leading-relaxed text-mist sm:text-base">{course.whyLearn}</p>
+        </RevealSection>
+      </section>
+
+      {/* Career Opportunities + Industry Demand */}
+      <section className="mx-auto grid max-w-4xl gap-8 px-5 pb-14 sm:grid-cols-2 lg:px-8">
+        <RevealSection>
+          <h2 className="mb-4 font-display text-lg font-semibold">Career Opportunities</h2>
+          <ul className="space-y-2.5">
+            {course.careerOpportunities.map((role) => (
+              <li key={role} className="flex items-start gap-2 text-sm text-mist">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-signal-cyan" /> {role}
+              </li>
+            ))}
+          </ul>
+        </RevealSection>
+        <RevealSection delay={0.1}>
+          <h2 className="mb-4 font-display text-lg font-semibold">Industry Demand</h2>
+          <p className="text-sm leading-relaxed text-mist">{course.industryDemand}</p>
         </RevealSection>
       </section>
 
@@ -145,6 +191,23 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {course.projects.map((p) => (
               <div key={p} className="rounded-2xl border border-white/8 bg-ink-900 p-5 text-sm text-mist">{p}</div>
+            ))}
+          </div>
+        </RevealSection>
+      </section>
+
+      {/* Career Roadmap */}
+      <section className="mx-auto max-w-4xl px-5 pb-14 lg:px-8">
+        <RevealSection>
+          <h2 className="mb-5 font-display text-2xl font-bold">Your Career Roadmap</h2>
+          <div className="space-y-3">
+            {course.careerRoadmap.map((step, i) => (
+              <div key={step} className="flex items-start gap-4 rounded-xl border border-white/8 bg-ink-900 p-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-signal-blue to-signal-violet font-mono text-xs font-bold">
+                  {i + 1}
+                </span>
+                <p className="text-sm text-mist">{step}</p>
+              </div>
             ))}
           </div>
         </RevealSection>

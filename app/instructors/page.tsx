@@ -1,11 +1,12 @@
-import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 import { instructors } from '@/lib/instructors-data';
 import RevealSection from '@/components/RevealSection';
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: 'Instructors',
   description: 'Meet the instructors teaching DigitalAI Learning Institute online courses.',
-};
+  path: '/instructors',
+});
 
 export default function InstructorsPage() {
   return (

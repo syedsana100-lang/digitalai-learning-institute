@@ -2,15 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getCategoriesInUse, getPostsByCategory, categoryToSlug, slugToCategory } from '@/lib/blog-data';
-import { getMergedBlogPosts } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 import { notFound } from 'next/navigation';
 
-export async function generateStaticParams() {
-  const posts = await getMergedBlogPosts();
-  return getCategoriesInUse(posts).map((c) => ({ category: categoryToSlug(c) }));
+export function generateStaticParams() {
+  return getCategoriesInUse().map((c) => ({ category: categoryToSlug(c) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
@@ -29,8 +27,7 @@ export default async function BlogCategoryPage({ params }: { params: Promise<{ c
   const category = slugToCategory(categorySlug);
   if (!category) notFound();
 
-  const posts = await getMergedBlogPosts();
-  const categoryPosts = getPostsByCategory(category, posts);
+  const posts = getPostsByCategory(category);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -57,12 +54,12 @@ export default async function BlogCategoryPage({ params }: { params: Promise<{ c
 
       <RevealSection className="mx-auto max-w-3xl px-5 py-10 text-center lg:px-8">
         <h1 className="font-display text-4xl font-extrabold lg:text-5xl">{category} Articles</h1>
-        <p className="mt-4 text-mist">{categoryPosts.length} article{categoryPosts.length === 1 ? '' : 's'} in this category.</p>
+        <p className="mt-4 text-mist">{posts.length} article{posts.length === 1 ? '' : 's'} in this category.</p>
       </RevealSection>
 
       <section className="mx-auto max-w-6xl px-5 pb-14 lg:px-8">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categoryPosts.map((post, i) => (
+          {posts.map((post, i) => (
             <RevealSection key={post.slug} delay={i * 0.05}>
               <BlogCard post={post} />
             </RevealSection>

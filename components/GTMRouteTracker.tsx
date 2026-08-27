@@ -2,23 +2,30 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { siteConfig } from '@/lib/site-config';
 
 declare global {
   interface Window {
-    dataLayer?: Record<string, unknown>[];
+    dataLayer: Record<string, unknown>[];
   }
 }
 
-export default function GTMRouteTracker() {
+function GTMRouteTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.dataLayer = window.dataLayer || [];
-    const url = searchParams?.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
-    window.dataLayer.push({ event: 'pageview', page: url });
+    if (!siteConfig.analytics.gtmId) return;
+    if (typeof window === 'undefined' || !window.dataLayer) return;
+
+    const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+    window.dataLayer.push({
+      event: 'page_view',
+      page_path: url,
+    });
   }, [pathname, searchParams]);
 
   return null;
 }
+
+export default GTMRouteTracker;

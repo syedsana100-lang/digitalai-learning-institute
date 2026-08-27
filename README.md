@@ -251,3 +251,105 @@ including the framework) and pre-rendered at build time — Core Web Vitals
 targets (LCP/CLS/INP) are realistic on this architecture. As with the rest of
 the site, verify real numbers with `npm run build && npm run start` plus
 Lighthouse, since `npm run dev` is not representative of production speed.
+
+## Content & Trust Upgrade (2026-08-26)
+
+### About page — fully rebuilt (13 sections)
+Hero, Our Story (detailed, no fabricated history), Mission, Vision, Core Values,
+Why Choose DigitalAI, Learning Methodology (Learn→Practice→Build→Validate→Apply),
+Career Support Framework, Student Success Focus (no fake stats), Trainers &
+Mentors (pulls from `lib/instructors-data.ts`), DigitalAI Difference comparison
+table, 15-question FAQ with schema, final CTA. Structurally inspired by
+collegevidya.com/about-us as requested — content is 100% original, no copied text.
+
+### New: Gallery page (`/gallery`)
+7 categories (Online Classes, Training Sessions, Workshops, Certifications,
+Student Activities, Events, Learning Environment), each with alt-texted images,
+breadcrumbs, ImageGallery + Breadcrumb schema. **Images are placeholders** —
+see `lib/gallery-data.ts`, replace each `seed` with a real uploaded photo path
+before publishing. Linked from header, mobile menu, footer, and sitemap.
+
+### New: Payment page (`/payment`)
+UI structurally modeled on the reference (UPI/QR option + Card option via
+Razorpay), but **not wired to real payment processing** — there's no Razorpay
+account or UPI ID configured. The page shows a visible amber warning banner
+until `NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK` is set and the placeholder UPI ID is
+replaced. This matches the original build rule: no payment credentials were
+provided, so no real payment processing was implemented — only the page shell.
+
+### Removed placeholder values from homepage (per audit)
+- Stats section: removed the `[XX]%` placement-support placeholder, replaced with
+  honest "Online + Offline" framing (was already non-numeric elsewhere)
+- Pricing (`lib/pricing-data.ts` + `/fees`): all `₹XX,XXX` placeholders replaced
+  with "Contact for Current Fees" — no invented numbers anywhere on the site now
+
+### Not done in this pass (flagging honestly)
+- Legal pages (Privacy/Terms/Refund/Disclaimer/Cookie) and a new Help & Support
+  page were requested but not rewritten this round — they still carry the
+  earlier structural placeholder content. These need real legal review before
+  they're production-safe; happy to draft fuller structure next, clearly marked
+  for lawyer sign-off.
+- Popular Courses card copy — only got a "Become a [Role]" line in an earlier
+  pass; a deeper copy pass (skills covered / learning outcomes inline on the
+  card) wasn't done this round.
+- Course, Organization, LocalBusiness, FAQ and Breadcrumb schema were already
+  implemented in earlier passes — re-verified working, not re-touched.
+
+## Course Page Content Upgrade (2026-08-26)
+
+Used ielevate.in/digital-marketing-course and nsim.in's Advance Digital Marketing
+Course page as **structural** reference (depth of curriculum, tools list, audience
+segmentation) — content is 100% original, not copied.
+
+### What changed for Digital Marketing specifically (`lib/courses-data.ts`)
+- Curriculum expanded from 6 to 9 modules (Foundations, SEO, Google Ads, Meta Ads,
+  Content & Social, Email Marketing, Analytics & GTM, AI Tools for Marketing, Capstone)
+- Tools list expanded from 4 to 10 (GA4, GTM, Search Console, WordPress, Canva, AI tools, etc.)
+- Eligibility expanded from 1 line to 5 real audience segments (students, working
+  professionals, business owners, freelancers)
+- FAQs expanded from 1 to 15 questions, matching the reference's FAQ depth
+
+### What changed for ALL 5 courses (shared template, `app/courses/[slug]/page.tsx`)
+- New **Quick Facts strip** under the hero (Duration, Learning Mode, Certification,
+  Eligibility) — every course page gets this automatically
+- Tools & Technologies pulled out of the sidebar into its own dedicated, larger
+  visual section (light background, bigger pill badges) — matches the reference
+  sites' "Tools You'll Master" treatment
+
+### Deliberately NOT copied from the references (stayed honest)
+Both reference sites include: specific salary bands (₹3–25 LPA by experience),
+student-placed counts (3,000+ / 51,000+ trained), hiring-partner counts (500+),
+official partner badges (Google Partner, Amazon ATES, Meesho), and named student
+testimonials with real companies. None of this exists for DigitalAI yet, so
+**none of it was fabricated** — FAQs explicitly state there's no job guarantee,
+and no invented numbers were added anywhere.
+
+### Not done yet
+The other 4 courses (AI, Data Science, Full Stack, Cyber Security) still have
+their original curriculum depth (5–6 modules) — only Digital Marketing's data
+was expanded to match the reference depth. The shared template upgrade (Quick
+Facts + Tools section) applies to all 5 automatically, but the underlying
+curriculum/tools/eligibility data for the other 4 would need the same expansion
+treatment if you want matching depth across the board.
+
+## All Courses Content Depth Match (2026-08-26)
+
+Expanded Artificial Intelligence, Data Science, Full Stack Development, and
+Cyber Security to match the depth Digital Marketing got in the previous pass —
+each with its own distinct, original content (not copy-paste between courses):
+
+| Course | Modules | FAQs | Tools | Eligibility segments |
+|---|---|---|---|---|
+| Artificial Intelligence | 8 | 12 | 10 | 4 |
+| Data Science | 8 | 12 | 10 | 4 |
+| Full Stack Development | 8 | 12 | 10 | 4 |
+| Digital Marketing | 9 | 15 | 11 | 5 |
+| Cyber Security | 8 | 12 | 9 | 4 |
+
+Every course now uses the same shared page template (Quick Facts strip, visual
+Tools grid, Career Roadmap, Career Opportunities, Industry Demand) — so the
+design is fully consistent, but the underlying content is specific to each
+course's actual curriculum and audience.
+
+No fabricated stats, salary figures, guarantees, or fake partner logos were
+added anywhere — every course's FAQ explicitly states there's no job guarantee.

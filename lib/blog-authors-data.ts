@@ -1,9 +1,11 @@
 export interface BlogAuthor {
   id: string;
   name: string;
-  designation: string;
-  bio: string;
-  avatarSeed: string;
+  role?: string;
+  designation?: string;
+  bio?: string;
+  avatarUrl?: string;
+  avatarSeed?: string;
   social?: { linkedin?: string; twitter?: string };
 }
 

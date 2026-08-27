@@ -19,7 +19,8 @@ export type ContentBlock =
   | { type: 'quote'; text: string }
   | { type: 'code'; text: string; language?: string }
   | { type: 'links'; intro?: string; items: { label: string; href: string }[] }
-  | { type: 'image'; src: string; alt?: string; caption?: string };
+  | { type: 'image'; src: string; alt?: string; caption?: string }
+  | { type: 'youtube'; videoId: string; title?: string };
 
 export interface BlogPost {
   slug: string;

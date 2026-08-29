@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { homepageFAQs } from '@/lib/homepage-faq-data';
+import { getHomepageFaqs } from '@/sanity/lib/content';
 import FAQAccordion from '@/components/FAQAccordion';
 import RevealSection from '@/components/RevealSection';
 
-export default function HomepageFAQSection() {
+export default async function HomepageFAQSection() {
+  const faqs = await getHomepageFaqs(homepageFAQs.slice(0, 10));
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: homepageFAQs.map((f) => ({
+    mainEntity: faqs.map((f) => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
@@ -25,7 +27,7 @@ export default function HomepageFAQSection() {
           </p>
         </RevealSection>
         <RevealSection delay={0.1}>
-          <FAQAccordion items={homepageFAQs.slice(0, 10)} light />
+          <FAQAccordion items={faqs} light />
         </RevealSection>
         <RevealSection delay={0.15} className="mt-6 text-center">
           <Link href="/faq" className="focus-ring text-sm font-semibold text-signal-blue hover:underline">

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, MessageCircle, Award, Code2, LifeBuoy, Infinity as InfinityIcon } from 'lucide-react';
@@ -107,7 +108,20 @@ export default function Hero({ homepage }: { homepage?: SanityHomepage | null })
         </motion.div>
 
         <div className="relative">
-          <AnimatedHeroVisual />
+          {homepage?.heroImageUrl ? (
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/10 shadow-glow">
+              <Image
+                src={homepage.heroImageUrl}
+                alt={homepage.heroImageAlt || 'DigitalAI Learning Institute'}
+                fill
+                priority
+                className="object-cover"
+                sizes="(min-width: 1024px) 560px, 100vw"
+              />
+            </div>
+          ) : (
+            <AnimatedHeroVisual />
+          )}
           {tags.map((t, i) => (
             <motion.span
               key={t.label}

@@ -1,6 +1,7 @@
 import { buildMetadata } from '@/lib/seo';
 import FAQAccordion from '@/components/FAQAccordion';
 import RevealSection from '@/components/RevealSection';
+import { getMergedFaqs } from '@/sanity/lib/content';
 
 export const metadata = buildMetadata({
   title: 'FAQ',
@@ -8,7 +9,7 @@ export const metadata = buildMetadata({
   path: '/faq',
 });
 
-const faqs = [
+const staticFaqs = [
   { question: 'Who can join the courses?', answer: 'Anyone from college students to working professionals across India — most programs assume no prior technical background.' },
   { question: 'Are courses online?', answer: 'Yes, all current programs are delivered online with live sessions and recordings.' },
   { question: 'Are beginners eligible?', answer: 'Yes, most programs are designed to start from the fundamentals.' },
@@ -24,9 +25,22 @@ const faqs = [
   { question: 'What is the refund policy?', answer: 'See our Refund Policy page for full details.' },
 ];
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const faqs = await getMergedFaqs(staticFaqs);
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
   return (
     <div className="pt-16 pb-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <RevealSection className="mx-auto max-w-3xl px-5 text-center lg:px-8">
         <h1 className="font-display text-4xl font-extrabold lg:text-5xl">Frequently Asked Questions</h1>
       </RevealSection>

@@ -1,6 +1,7 @@
 import { buildMetadata } from '@/lib/seo';
 import Hero from '@/components/Hero';
 import StatsSection from '@/components/StatsSection';
+import AboutSection from '@/components/AboutSection';
 import WhyDigitalAI from '@/components/WhyDigitalAI';
 import CategoryGrid from '@/components/CategoryGrid';
 import CourseGrid from '@/components/CourseGrid';
@@ -42,6 +43,7 @@ export default async function HomePage() {
     <>
       <Hero homepage={homepage} />
       <StatsSection stats={homepage?.stats} />
+      <AboutSection homepage={homepage} />
       <WhyDigitalAI features={homepage?.whyChooseUs} />
       <CategoryGrid />
       <CourseGrid courses={courses} />

@@ -46,6 +46,7 @@ export interface Course {
   industryDemand: string; // directional, non-numeric framing — no invented stats
   careerRoadmap: string[]; // step-by-step path from enrolling to job-ready
   heroImageUrl?: string;
+  brochureUrl?: string;
   seo: {
     title: string;
     description: string;
@@ -447,14 +448,14 @@ export const courses: Course[] = [
   },
 ];
 
-export function getAllCourses() {
-  return courses;
+export function getAllCourses(source: Course[] = courses) {
+  return source;
 }
 
-export function getCourseBySlug(slug: string) {
-  return courses.find((c) => c.slug === slug) || null;
+export function getCourseBySlug(slug: string, source: Course[] = courses) {
+  return source.find((c) => c.slug === slug) || null;
 }
 
-export function getCoursesByCategory(category: CourseCategory) {
-  return courses.filter((c) => c.category === category);
+export function getCoursesByCategory(category: CourseCategory, source: Course[] = courses) {
+  return source.filter((c) => c.category === category);
 }

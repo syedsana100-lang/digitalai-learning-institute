@@ -2,13 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getCategoriesInUse, getPostsByCategory, categoryToSlug, slugToCategory } from '@/lib/blog-data';
+import { getMergedBlogPosts } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 import { notFound } from 'next/navigation';
 
-export function generateStaticParams() {
-  return getCategoriesInUse().map((c) => ({ category: categoryToSlug(c) }));
+export async function generateStaticParams() {
+  const posts = await getMergedBlogPosts();
+  return getCategoriesInUse(posts).map((c) => ({ category: categoryToSlug(c) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
@@ -27,7 +29,8 @@ export default async function BlogCategoryPage({ params }: { params: Promise<{ c
   const category = slugToCategory(categorySlug);
   if (!category) notFound();
 
-  const posts = getPostsByCategory(category);
+  const allPosts = await getMergedBlogPosts();
+  const posts = getPostsByCategory(category, allPosts);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

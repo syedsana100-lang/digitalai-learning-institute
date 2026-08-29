@@ -2,13 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getAllTags, getPostsByTag } from '@/lib/blog-data';
+import { getMergedBlogPosts } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 import { notFound } from 'next/navigation';
 
-export function generateStaticParams() {
-  return getAllTags().map((t) => ({ tag: t.toLowerCase() }));
+export async function generateStaticParams() {
+  const posts = await getMergedBlogPosts();
+  return getAllTags(posts).map((t) => ({ tag: t.toLowerCase() }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {
@@ -24,11 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ tag: stri
 export default async function BlogTagPage({ params }: { params: Promise<{ tag: string }> }) {
   const { tag } = await params;
   const decoded = decodeURIComponent(tag);
-  const allTags = getAllTags();
+  const allPosts = await getMergedBlogPosts();
+  const allTags = getAllTags(allPosts);
   const realTag = allTags.find((t) => t.toLowerCase() === decoded.toLowerCase());
   if (!realTag) notFound();
 
-  const posts = getPostsByTag(realTag);
+  const posts = getPostsByTag(realTag, allPosts);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

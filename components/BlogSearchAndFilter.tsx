@@ -2,19 +2,20 @@
 
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { getAllPosts, getCategoriesInUse, type BlogCategory } from '@/lib/blog-data';
+import { getAllPosts, getCategoriesInUse, type BlogCategory, type BlogPost } from '@/lib/blog-data';
+import type { BlogAuthor } from '@/lib/blog-authors-data';
 import BlogCard from '@/components/BlogCard';
 import RevealSection from '@/components/RevealSection';
 
 const PAGE_SIZE = 6;
 
-export default function BlogSearchAndFilter() {
+export default function BlogSearchAndFilter({ posts, authors }: { posts?: BlogPost[]; authors?: BlogAuthor[] }) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<BlogCategory | 'all'>('all');
   const [visible, setVisible] = useState(PAGE_SIZE);
 
-  const categories = getCategoriesInUse();
-  const allPosts = getAllPosts();
+  const allPosts = getAllPosts(posts);
+  const categories = getCategoriesInUse(allPosts);
 
   const filtered = useMemo(() => {
     return allPosts.filter((p) => {
@@ -73,7 +74,7 @@ export default function BlogSearchAndFilter() {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.slice(0, visible).map((post, i) => (
               <RevealSection key={post.slug} delay={(i % PAGE_SIZE) * 0.05}>
-                <BlogCard post={post} />
+                <BlogCard post={post} authors={authors} />
               </RevealSection>
             ))}
           </div>

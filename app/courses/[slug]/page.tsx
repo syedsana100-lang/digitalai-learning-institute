@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Clock, Signal, Laptop, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { getAllCourses, getCourseBySlug, categoryMeta } from '@/lib/courses-data';
+import { getMergedCourses } from '@/sanity/lib/content';
 import { getInstructorById } from '@/lib/instructors-data';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CurriculumAccordion from '@/components/CurriculumAccordion';
@@ -11,13 +12,15 @@ import CTASection from '@/components/CTASection';
 import RevealSection from '@/components/RevealSection';
 import { siteConfig } from '@/lib/site-config';
 
-export function generateStaticParams() {
-  return getAllCourses().map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  const courses = await getMergedCourses();
+  return getAllCourses(courses).map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const courses = await getMergedCourses();
+  const course = getCourseBySlug(slug, courses);
   if (!course) return {};
   return {
     title: course.seo.title,
@@ -29,7 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const courses = await getMergedCourses();
+  const course = getCourseBySlug(slug, courses);
   if (!course) notFound();
 
   const instructor = getInstructorById(course.instructorId);
@@ -84,6 +88,16 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             <Link href="/contact#counselling" className="focus-ring rounded-full border border-white/15 px-7 py-3.5 text-sm font-semibold hover:bg-white/5">
               Enquire Now
             </Link>
+            {course.brochureUrl && (
+              <a
+                href={course.brochureUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus-ring rounded-full border border-white/15 px-7 py-3.5 text-sm font-semibold hover:bg-white/5"
+              >
+                Download Course Brochure
+              </a>
+            )}
           </div>
         </RevealSection>
       </section>

@@ -1,14 +1,15 @@
 import { Linkedin, Twitter } from 'lucide-react';
 import type { BlogAuthor } from '@/lib/blog-authors-data';
+import type { BlogPost } from '@/lib/blog-data';
 import { getAllPosts } from '@/lib/blog-data';
 
-export default function AuthorBox({ author }: { author: BlogAuthor }) {
-  const articleCount = getAllPosts().filter((p) => p.authorId === author.id).length;
+export default function AuthorBox({ author, posts }: { author: BlogAuthor; posts?: BlogPost[] }) {
+  const articleCount = getAllPosts(posts).filter((p) => p.authorId === author.id).length;
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-ink-900 p-6 sm:flex-row sm:items-start">
       <img
-        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author.avatarSeed}`}
+        src={author.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.avatarSeed}`}
         alt=""
         aria-hidden="true"
         loading="lazy"

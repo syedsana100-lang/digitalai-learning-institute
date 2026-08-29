@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight, Clock, ChevronRight } from 'lucide-react';
-import { getAllPosts, getFeaturedPost, getPopularPosts, getTrendingPosts, getLatestPosts, calculateReadTime, getCategoriesInUse, categoryToSlug } from '@/lib/blog-data';
+import { getFeaturedPost, getPopularPosts, getTrendingPosts, getLatestPosts, calculateReadTime, getCategoriesInUse, categoryToSlug, getFeaturedImageUrl } from '@/lib/blog-data';
+import { getMergedBlogPosts, getMergedBlogAuthors } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import FeaturedPostCard from '@/components/FeaturedPostCard';
@@ -15,11 +16,12 @@ export const metadata: Metadata = {
   openGraph: { title: 'DigitalAI Learning Blog', description: 'Practical articles on AI, data, development, digital marketing and career growth.', type: 'website' },
 };
 
-export default function BlogPage() {
-  const featured = getFeaturedPost();
-  const trending = getTrendingPosts(featured.slug, 3);
-  const popular = getPopularPosts(featured.slug, 3);
-  const latest = getLatestPosts(featured.slug, 3);
+export default async function BlogPage() {
+  const [posts, authors] = await Promise.all([getMergedBlogPosts(), getMergedBlogAuthors()]);
+  const featured = getFeaturedPost(posts);
+  const trending = getTrendingPosts(featured.slug, 3, posts);
+  const popular = getPopularPosts(featured.slug, 3, posts);
+  const latest = getLatestPosts(featured.slug, 3, posts);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -98,7 +100,7 @@ export default function BlogPage() {
                 className="focus-ring group flex items-center gap-4 p-5 transition-colors hover:bg-white/[0.02]"
               >
                 <img
-                  src={`https://picsum.photos/seed/${post.featuredImage}/120/90`}
+                  src={getFeaturedImageUrl(post, 120, 90)}
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
@@ -119,7 +121,7 @@ export default function BlogPage() {
       )}
 
       {/* Full searchable/filterable archive with pagination */}
-      <BlogSearchAndFilter />
+      <BlogSearchAndFilter posts={posts} authors={authors} />
 
       {/* Crawlable category links — real <a> tags so category pages are discoverable
           by search engine crawlers and tools like Screaming Frog, independent of the
@@ -128,7 +130,7 @@ export default function BlogPage() {
         <RevealSection>
           <h2 className="mb-4 font-display text-lg font-semibold">Browse by Category</h2>
           <div className="flex flex-wrap gap-2">
-            {getCategoriesInUse().map((c) => (
+            {getCategoriesInUse(posts).map((c) => (
               <Link
                 key={c}
                 href={`/blog/category/${categoryToSlug(c)}`}

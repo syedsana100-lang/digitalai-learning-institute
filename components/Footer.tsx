@@ -66,7 +66,7 @@ export default function Footer({ settings }: { settings?: SanitySiteSettings | n
         <div className="grid gap-10 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <Link href="/" className="focus-ring flex items-center gap-2.5" aria-label="DigitalAI Learning Institute — Home">
-              <Image src={logoUrl} alt="DigitalAI Learning Institute logo" width={180} height={60} className="h-14 w-auto" />
+              <Image src={logoUrl} alt="DigitalAI Learning Institute logo" width={36} height={34} className="h-9 w-auto" />
               <span className="font-display text-lg font-extrabold">
                 Digital<span className="text-gradient">AI</span> Learning Institute
               </span>

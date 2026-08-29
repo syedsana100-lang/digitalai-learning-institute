@@ -19,6 +19,6 @@ export const blogAuthors: BlogAuthor[] = [
   },
 ];
 
-export function getAuthorById(id: string) {
-  return blogAuthors.find((a) => a.id === id) || blogAuthors[0];
+export function getAuthorById(id: string, source: BlogAuthor[] = blogAuthors) {
+  return source.find((a) => a.id === id) || source[0] || blogAuthors[0];
 }

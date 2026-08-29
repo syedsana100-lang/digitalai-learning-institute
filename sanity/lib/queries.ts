@@ -48,6 +48,11 @@ const courseProjection = /* groq */ `{
   eligibility,
   curriculum,
   projects,
+  whyLearn,
+  careerOpportunities,
+  industryDemand,
+  careerRoadmap,
+  "brochureUrl": brochure.asset->url,
   instructorName,
   faqs,
   seo
@@ -133,6 +138,7 @@ careerRoadmap: (doc.careerRoadmap as string[]) || [],
       description: String((doc.seo as Record<string, unknown> | undefined)?.metaDescription || doc.shortDescription || ''),
     },
     heroImageUrl: hero ? hero.width(1600).url() : undefined,
+    brochureUrl: (doc.brochureUrl as string) || undefined,
   };
 }
 

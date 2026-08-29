@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronRight, Clock, Calendar } from 'lucide-react';
 import {
-  getAllPosts, getPostBySlug, getRelatedPosts, getLatestPosts, getPopularPosts,
-  calculateReadTime, getTableOfContents,
+  getPostBySlug, getRelatedPosts, getLatestPosts, getPopularPosts,
+  calculateReadTime, getTableOfContents, getFeaturedImageUrl, getAllPosts,
 } from '@/lib/blog-data';
 import { getAuthorById } from '@/lib/blog-authors-data';
+import { getMergedBlogPosts, getMergedBlogAuthors } from '@/sanity/lib/content';
 import { siteConfig } from '@/lib/site-config';
 import BlogCard from '@/components/BlogCard';
 import BlogContentRenderer from '@/components/BlogContentRenderer';
@@ -19,16 +20,18 @@ import FAQAccordion from '@/components/FAQAccordion';
 import CTASection from '@/components/CTASection';
 import RevealSection from '@/components/RevealSection';
 
-export function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const posts = await getMergedBlogPosts();
+  return getAllPosts(posts).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const posts = await getMergedBlogPosts();
+  const post = getPostBySlug(slug, posts);
   if (!post) return {};
   const url = `${siteConfig.brand.domain}/blog/${post.slug}`;
-  const ogImage = post.seo.ogImage || `https://picsum.photos/seed/${post.featuredImage}/1200/630`;
+  const ogImage = post.seo.ogImage || getFeaturedImageUrl(post, 1200, 630);
   return {
     title: post.seo.title,
     description: post.seo.description,
@@ -53,13 +56,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const [posts, authors] = await Promise.all([getMergedBlogPosts(), getMergedBlogAuthors()]);
+  const post = getPostBySlug(slug, posts);
   if (!post) notFound();
 
-  const author = getAuthorById(post.authorId);
-  const related = getRelatedPosts(post, 6);
-  const latest = getLatestPosts(post.slug, 3);
-  const popular = getPopularPosts(post.slug, 3);
+  const author = getAuthorById(post.authorId, authors);
+  const related = getRelatedPosts(post, 6, posts);
+  const latest = getLatestPosts(post.slug, 3, posts);
+  const popular = getPopularPosts(post.slug, 3, posts);
   const toc = getTableOfContents(post);
   const readTime = calculateReadTime(post);
   const url = `${siteConfig.brand.domain}/blog/${post.slug}`;
@@ -69,7 +73,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     '@type': 'Article',
     headline: post.title,
     description: post.seo.description,
-    image: `https://picsum.photos/seed/${post.featuredImage}/1200/630`,
+    image: getFeaturedImageUrl(post, 1200, 630),
     author: { '@type': 'Organization', name: author.name },
     publisher: { '@type': 'Organization', name: siteConfig.brand.name, url: siteConfig.brand.domain },
     datePublished: post.publishedISO,
@@ -137,7 +141,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </RevealSection>
 
           <img
-            src={`https://picsum.photos/seed/${post.featuredImage}/900/500`}
+            src={getFeaturedImageUrl(post, 900, 500)}
             alt={post.title}
             loading="lazy"
             className="mt-8 aspect-[16/9] w-full rounded-2xl object-cover"

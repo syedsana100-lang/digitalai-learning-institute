@@ -14,8 +14,7 @@ const display = Manrope({ subsets: ['latin'], variable: '--font-display', weight
 const body = Inter({ subsets: ['latin'], variable: '--font-body', weight: ['400', '500', '600'] });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', weight: ['400', '500'] });
 
-export const metadata
-: Metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.brand.domain),
   title: {
     default: `${siteConfig.brand.name} — ${siteConfig.brand.tagline}`,
@@ -23,13 +22,7 @@ export const metadata
   },
   description:
     'Build practical technology and digital skills through structured online learning, projects, mentorship and career-focused guidance — from anywhere in India.',
-  icons: {
-  icon: '/favicon.ico',
-  shortcut: '/favicon.ico',
-  apple: '/favicon.ico',
-},
-  
-    openGraph: {
+  openGraph: {
     type: 'website',
     siteName: siteConfig.brand.name,
     locale: 'en_IN',
@@ -46,7 +39,6 @@ const organizationSchema = {
   name: siteConfig.brand.name,
   alternateName: siteConfig.brand.shortName,
   url: siteConfig.brand.domain,
-  logo: 'https://cdn.sanity.io/images/migcvrp5/production/eb4684c418c152f634d3caf9c0971ed70bca9d03-1254x1254.png',
   description:
     'India-wide online and offline technical education institute offering practical courses in AI, Data Science, Programming, Digital Marketing, Cloud and Cyber Security.',
   telephone: siteConfig.contact.phone,

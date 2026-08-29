@@ -15,6 +15,7 @@ import HomepageFAQSection from '@/components/HomepageFAQSection';
 import CTASection from '@/components/CTASection';
 import { siteConfig } from '@/lib/site-config';
 import { fetchSanityHomepage, fetchSanityTestimonials } from '@/sanity/lib/queries';
+import { getMergedCourses } from '@/sanity/lib/content';
 
 export const metadata = {
   ...buildMetadata({
@@ -31,7 +32,11 @@ export default async function HomePage() {
   // hardcoded defaults in each section below. `null`/`[]` (Sanity not
   // configured, no document yet, or a fetch failure) means every section
   // renders exactly as it did before this was wired up.
-  const [homepage, testimonials] = await Promise.all([fetchSanityHomepage(), fetchSanityTestimonials()]);
+  const [homepage, testimonials, courses] = await Promise.all([
+    fetchSanityHomepage(),
+    fetchSanityTestimonials(),
+    getMergedCourses(),
+  ]);
 
   return (
     <>
@@ -39,7 +44,7 @@ export default async function HomePage() {
       <StatsSection stats={homepage?.stats} />
       <WhyDigitalAI features={homepage?.whyChooseUs} />
       <CategoryGrid />
-      <CourseGrid />
+      <CourseGrid courses={courses} />
       <PricingPreview />
       <PlacementPartners />
       <StudentSuccessStories />

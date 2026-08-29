@@ -359,58 +359,67 @@ export function slugToCategory(slug: string): BlogCategory | null {
   return allCategories.find((c) => categoryToSlug(c) === slug) || null;
 }
 
-export function getAllPosts() {
-  return blogPosts;
+/** Sanity-sourced posts already have a full CDN image URL in `featuredImage`;
+ * static posts store a placeholder seed string for picsum.photos. This lets
+ * every blog card/page render either kind without knowing which it got. */
+export function getFeaturedImageUrl(post: Pick<BlogPost, 'featuredImage'>, width: number, height: number): string {
+  const raw = post.featuredImage;
+  if (raw && raw.startsWith('http')) return raw;
+  return `https://picsum.photos/seed/${raw}/${width}/${height}`;
 }
 
-export function getPostBySlug(slug: string) {
-  return blogPosts.find((p) => p.slug === slug) || null;
+export function getAllPosts(source: BlogPost[] = blogPosts) {
+  return source;
 }
 
-export function getFeaturedPost() {
-  return blogPosts.find((p) => p.featured) || blogPosts[0];
+export function getPostBySlug(slug: string, source: BlogPost[] = blogPosts) {
+  return source.find((p) => p.slug === slug) || null;
 }
 
-export function getPopularPosts(excludeSlug?: string, limit = 4) {
-  return blogPosts.filter((p) => p.popular && p.slug !== excludeSlug).slice(0, limit);
+export function getFeaturedPost(source: BlogPost[] = blogPosts) {
+  return source.find((p) => p.featured) || source[0];
 }
 
-export function getTrendingPosts(excludeSlug?: string, limit = 4) {
-  return blogPosts.filter((p) => p.trending && p.slug !== excludeSlug).slice(0, limit);
+export function getPopularPosts(excludeSlug?: string, limit = 4, source: BlogPost[] = blogPosts) {
+  return source.filter((p) => p.popular && p.slug !== excludeSlug).slice(0, limit);
 }
 
-export function getLatestPosts(excludeSlug?: string, limit = 6) {
-  return [...blogPosts]
+export function getTrendingPosts(excludeSlug?: string, limit = 4, source: BlogPost[] = blogPosts) {
+  return source.filter((p) => p.trending && p.slug !== excludeSlug).slice(0, limit);
+}
+
+export function getLatestPosts(excludeSlug?: string, limit = 6, source: BlogPost[] = blogPosts) {
+  return [...source]
     .filter((p) => p.slug !== excludeSlug)
     .sort((a, b) => (a.publishedISO < b.publishedISO ? 1 : -1))
     .slice(0, limit);
 }
 
-export function getRelatedPosts(post: BlogPost, limit = 3) {
-  const sameCategory = blogPosts.filter((p) => p.slug !== post.slug && p.category === post.category);
-  const sameTag = blogPosts.filter(
+export function getRelatedPosts(post: BlogPost, limit = 3, source: BlogPost[] = blogPosts) {
+  const sameCategory = source.filter((p) => p.slug !== post.slug && p.category === post.category);
+  const sameTag = source.filter(
     (p) => p.slug !== post.slug && p.category !== post.category && p.tags.some((t) => post.tags.includes(t))
   );
   return [...sameCategory, ...sameTag].slice(0, limit);
 }
 
-export function getPostsByCategory(category: BlogCategory) {
-  return blogPosts.filter((p) => p.category === category);
+export function getPostsByCategory(category: BlogCategory, source: BlogPost[] = blogPosts) {
+  return source.filter((p) => p.category === category);
 }
 
-export function getPostsByTag(tag: string) {
-  return blogPosts.filter((p) => p.tags.includes(tag));
+export function getPostsByTag(tag: string, source: BlogPost[] = blogPosts) {
+  return source.filter((p) => p.tags.includes(tag));
 }
 
-export function getAllTags(): string[] {
+export function getAllTags(source: BlogPost[] = blogPosts): string[] {
   const set = new Set<string>();
-  blogPosts.forEach((p) => p.tags.forEach((t) => set.add(t)));
+  source.forEach((p) => p.tags.forEach((t) => set.add(t)));
   return Array.from(set).sort();
 }
 
-export function getCategoriesInUse(): BlogCategory[] {
+export function getCategoriesInUse(source: BlogPost[] = blogPosts): BlogCategory[] {
   const set = new Set<BlogCategory>();
-  blogPosts.forEach((p) => set.add(p.category));
+  source.forEach((p) => set.add(p.category));
   return Array.from(set);
 }
 

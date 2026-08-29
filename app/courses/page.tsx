@@ -1,6 +1,7 @@
 import { buildMetadata } from '@/lib/seo';
 import CourseGrid from '@/components/CourseGrid';
 import RevealSection from '@/components/RevealSection';
+import { getMergedCourses } from '@/sanity/lib/content';
 
 export const metadata = buildMetadata({
   title: 'Online Courses',
@@ -9,7 +10,8 @@ export const metadata = buildMetadata({
   path: '/courses',
 });
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  const courses = await getMergedCourses();
   return (
     <div className="pt-16">
       <RevealSection className="mx-auto max-w-3xl px-5 text-center lg:px-8">
@@ -18,7 +20,7 @@ export default function CoursesPage() {
           Practical, career-focused online programs — learn from anywhere in India.
         </p>
       </RevealSection>
-      <CourseGrid />
+      <CourseGrid courses={courses} />
     </div>
   );
 }

@@ -14,6 +14,7 @@ const display = Manrope({ subsets: ['latin'], variable: '--font-display', weight
 const body = Inter({ subsets: ['latin'], variable: '--font-body', weight: ['400', '500', '600'] });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', weight: ['400', '500'] });
 
+export const metadata
 : Metadata = {
   metadataBase: new URL(siteConfig.brand.domain),
   title: {
@@ -46,7 +47,7 @@ const organizationSchema = {
   alternateName: siteConfig.brand.shortName,
   url: siteConfig.brand.domain,
   logo: 'https://cdn.sanity.io/images/migcvrp5/production/eb4684c418c152f634d3caf9c0971ed70bca9d03-1254x1254.png',
-  descriptioexport const metadatan:
+  description:
     'India-wide online and offline technical education institute offering practical courses in AI, Data Science, Programming, Digital Marketing, Cloud and Cyber Security.',
   telephone: siteConfig.contact.phone,
   email: siteConfig.contact.email,

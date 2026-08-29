@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Linkedin, Instagram, Youtube, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { siteConfig } from '@/lib/site-config';
+import type { SanitySiteSettings } from '@/sanity/lib/queries';
 
 const columns = [
   {
@@ -41,37 +42,46 @@ const columns = [
   },
 ];
 
-const socials = [
-  { icon: Facebook, href: siteConfig.social.facebook, label: 'Facebook' },
-  { icon: Instagram, href: siteConfig.social.instagram, label: 'Instagram' },
-  { icon: Linkedin, href: siteConfig.social.linkedin, label: 'LinkedIn' },
-  { icon: Youtube, href: siteConfig.social.youtube, label: 'YouTube' },
-  { icon: Twitter, href: '', label: 'Twitter/X' },
-];
+export default function Footer({ settings }: { settings?: SanitySiteSettings | null }) {
+  // Sanity Site Settings override the hardcoded defaults when published;
+  // anything left empty in the CMS falls back to lib/site-config.ts.
+  const logoUrl = settings?.footerLogoUrl || settings?.logoUrl || '/images/logo.png';
+  const phone = settings?.phone || siteConfig.contact.phone;
+  const email = settings?.email || siteConfig.contact.email;
+  const address = settings?.address || siteConfig.contact.address;
+  const footerDescription = settings?.footerDescription || siteConfig.brand.tagline;
+  const copyrightText =
+    settings?.copyrightText || `© ${new Date().getFullYear()} DigitalAI Learning Institute. All rights reserved.`;
+  const socials = [
+    { icon: Facebook, href: settings?.facebook || siteConfig.social.facebook, label: 'Facebook' },
+    { icon: Instagram, href: settings?.instagram || siteConfig.social.instagram, label: 'Instagram' },
+    { icon: Linkedin, href: settings?.linkedin || siteConfig.social.linkedin, label: 'LinkedIn' },
+    { icon: Youtube, href: settings?.youtube || siteConfig.social.youtube, label: 'YouTube' },
+    { icon: Twitter, href: settings?.twitter || '', label: 'Twitter/X' },
+  ];
 
-export default function Footer() {
   return (
     <footer className="border-t border-white/5 bg-ink-950">
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <Link href="/" className="focus-ring flex items-center gap-2.5" aria-label="DigitalAI Learning Institute — Home">
-              <Image src="/images/logo.png" alt="DigitalAI Learning Institute logo" width={36} height={34} className="h-9 w-auto" />
+              <Image src={logoUrl} alt="DigitalAI Learning Institute logo" width={36} height={34} className="h-9 w-auto" />
               <span className="font-display text-lg font-extrabold">
                 Digital<span className="text-gradient">AI</span> Learning Institute
               </span>
             </Link>
-            <p className="mt-3 max-w-xs text-sm text-mist">{siteConfig.brand.tagline}</p>
+            <p className="mt-3 max-w-xs text-sm text-mist">{footerDescription}</p>
 
             <div className="mt-5 space-y-2 text-sm text-mist">
-              <a href={`tel:${siteConfig.contact.phone.replace(/\s/g, '')}`} className="focus-ring flex items-center gap-2 transition-colors hover:text-paper">
-                <Phone className="h-3.5 w-3.5 text-signal-cyan" /> {siteConfig.contact.phone}
+              <a href={`tel:${phone.replace(/\s/g, '')}`} className="focus-ring flex items-center gap-2 transition-colors hover:text-paper">
+                <Phone className="h-3.5 w-3.5 text-signal-cyan" /> {phone}
               </a>
-              <a href={`mailto:${siteConfig.contact.email}`} className="focus-ring flex items-center gap-2 transition-colors hover:text-paper">
-                <Mail className="h-3.5 w-3.5 text-signal-cyan" /> {siteConfig.contact.email}
+              <a href={`mailto:${email}`} className="focus-ring flex items-center gap-2 transition-colors hover:text-paper">
+                <Mail className="h-3.5 w-3.5 text-signal-cyan" /> {email}
               </a>
               <span className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-signal-cyan" /> {siteConfig.contact.address}
+                <MapPin className="h-3.5 w-3.5 text-signal-cyan" /> {address}
               </span>
             </div>
 
@@ -140,7 +150,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/5 pt-6 text-xs text-mist sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} DigitalAI Learning Institute. All rights reserved.</p>
+          <p>{copyrightText}</p>
           <p>Online + Offline technical education institute serving students across India.</p>
         </div>
       </div>

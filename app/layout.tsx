@@ -8,6 +8,7 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import { GoogleTagManagerScript, GoogleTagManagerNoScript } from '@/components/GoogleTagManager';
 import GTMRouteTracker from '@/components/GTMRouteTracker';
 import { siteConfig } from '@/lib/site-config';
+import { fetchSanitySiteSettings } from '@/sanity/lib/queries';
 
 const display = Manrope({ subsets: ['latin'], variable: '--font-display', weight: ['500', '600', '700', '800'] });
 const body = Inter({ subsets: ['latin'], variable: '--font-body', weight: ['400', '500', '600'] });
@@ -58,7 +59,12 @@ const localBusinessSchema = {
   priceRange: '₹₹',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Site-wide branding/contact/nav/footer content from Sanity, when published.
+  // `null` (Sanity not configured, or no document yet) means Header/Footer
+  // fall back to lib/site-config.ts exactly as before.
+  const settings = await fetchSanitySiteSettings();
+
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <head>
@@ -71,9 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Suspense>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-        <Header />
+        <Header settings={settings} />
         <main>{children}</main>
-        <Footer />
+        <Footer settings={settings} />
         <WhatsAppButton />
       </body>
     </html>

@@ -9,8 +9,9 @@ import { ChevronDown, Menu, Phone } from 'lucide-react';
 import { categoryMeta } from '@/lib/courses-data';
 import { siteConfig } from '@/lib/site-config';
 import MobileMenu from '@/components/MobileMenu';
+import type { SanitySiteSettings } from '@/sanity/lib/queries';
 
-const navLinks = [
+const defaultNavLinks = [
   { label: 'Home', href: '/' },
   { label: 'About Us', href: '/about' },
   { label: 'Placement', href: '/career-support' },
@@ -20,11 +21,23 @@ const navLinks = [
   { label: 'Contact', href: '/contact' },
 ];
 
-export default function Header() {
+export default function Header({ settings }: { settings?: SanitySiteSettings | null }) {
   const [scrolled, setScrolled] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  // Sanity Site Settings override the hardcoded defaults when published;
+  // an empty/missing document (or an unset individual field) keeps the
+  // existing site behaviour unchanged.
+  const navLinks =
+    settings?.navLinks && settings.navLinks.length > 0
+      ? settings.navLinks.map((l) => ({ label: l.label, href: l.href }))
+      : defaultNavLinks;
+  const logoUrl = settings?.logoUrl || '/images/logo.png';
+  const phone = settings?.phone || siteConfig.contact.phone;
+  const headerCtaText = settings?.headerCtaText || 'Enroll Now';
+  const headerCtaLink = settings?.headerCtaLink || '/contact#counselling';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -42,7 +55,7 @@ export default function Header() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 lg:px-8">
           <Link href="/" className="focus-ring flex items-center gap-2.5" aria-label="DigitalAI Learning Institute — Home">
             <Image
-              src="/images/logo.png"
+              src={logoUrl}
               alt="DigitalAI Learning Institute logo"
               width={40}
               height={38}
@@ -113,16 +126,16 @@ export default function Header() {
 
           <div className="flex items-center gap-3">
             <a
-              href={`tel:${siteConfig.contact.phone.replace(/\s/g, '')}`}
+              href={`tel:${phone.replace(/\s/g, '')}`}
               className="focus-ring hidden items-center gap-1.5 text-sm font-medium text-mist transition-colors hover:text-paper lg:flex"
             >
-              <Phone className="h-3.5 w-3.5" /> {siteConfig.contact.phone}
+              <Phone className="h-3.5 w-3.5" /> {phone}
             </a>
             <Link
-              href="/contact#counselling"
+              href={headerCtaLink}
               className="focus-ring hidden rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-5 py-2.5 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95 lg:inline-block"
             >
-              Enroll Now
+              {headerCtaText}
             </Link>
             <button
               aria-label="Open menu"

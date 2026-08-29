@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MessageCircle, Award, Code2, LifeBuoy, Infinity as InfinityIcon } from 'lucide-react';
 import AnimatedHeroVisual from '@/components/AnimatedHeroVisual';
 import { siteConfig } from '@/lib/site-config';
+import type { SanityHomepage } from '@/sanity/lib/queries';
 
 const tags = [
   { label: 'AI', top: '8%', left: '4%' },
@@ -25,7 +26,30 @@ const trustBadges = [
 
 const whatsappHref = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(siteConfig.contact.whatsappDefaultMessage)}`;
 
-export default function Hero() {
+// Default copy, used whenever the Sanity Homepage document (or an individual
+// field on it) is empty — publishing a partially-filled document never
+// breaks this section.
+const defaults = {
+  eyebrow: 'India-wide Online + Offline Technical Learning Institute',
+  heading: 'Build the Skills That',
+  highlight: 'Power the Digital Future',
+  description:
+    'Learn AI, Data Science, Programming, Digital Marketing, Cloud and Cyber Security through practical training — with live mentorship, project-based learning and placement support.',
+  primaryLabel: 'Chat on WhatsApp',
+  secondaryLabel: 'Explore Courses',
+  secondaryHref: '/courses',
+};
+
+export default function Hero({ homepage }: { homepage?: SanityHomepage | null }) {
+  const heading = homepage?.heroHeading || defaults.heading;
+  const highlight = homepage?.heroHighlight || defaults.highlight;
+  const description = homepage?.heroDescription || defaults.description;
+  const primaryLabel = homepage?.heroPrimaryCtaText || defaults.primaryLabel;
+  const primaryHref = homepage?.heroPrimaryCtaLink || whatsappHref;
+  const secondaryLabel = homepage?.heroSecondaryCtaText || defaults.secondaryLabel;
+  const secondaryHref = homepage?.heroSecondaryCtaLink || defaults.secondaryHref;
+  const isPrimaryExternal = primaryHref.startsWith('http') || primaryHref.startsWith('tel:');
+
   return (
     <section className="relative overflow-hidden bg-mesh-gradient pb-16 pt-16 lg:pb-20 lg:pt-20">
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
@@ -37,30 +61,38 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <p className="mb-5 inline-block rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-mist">
-            India-wide Online + Offline Technical Learning Institute
+            {defaults.eyebrow}
           </p>
           <h1 className="font-display text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-            Build the Skills That <span className="text-gradient">Power the Digital Future</span>
+            {heading} <span className="text-gradient">{highlight}</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-mist lg:text-lg">
-            Learn AI, Data Science, Programming, Digital Marketing, Cloud and Cyber Security through
-            practical training — with live mentorship, project-based learning and placement support.
+            {description}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="focus-ring flex items-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
-            >
-              <MessageCircle className="h-4 w-4" fill="white" /> Chat on WhatsApp
-            </a>
+            {isPrimaryExternal ? (
+              <a
+                href={primaryHref}
+                target={primaryHref.startsWith('tel:') ? undefined : '_blank'}
+                rel="noopener noreferrer"
+                className="focus-ring flex items-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
+              >
+                <MessageCircle className="h-4 w-4" fill="white" /> {primaryLabel}
+              </a>
+            ) : (
+              <Link
+                href={primaryHref}
+                className="focus-ring flex items-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
+              >
+                <MessageCircle className="h-4 w-4" fill="white" /> {primaryLabel}
+              </Link>
+            )}
             <Link
-              href="/courses"
+              href={secondaryHref}
               className="focus-ring group flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 text-sm font-semibold transition-all duration-150 hover:bg-white/5 active:scale-95"
             >
-              Explore Courses
+              {secondaryLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>

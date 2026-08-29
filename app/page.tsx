@@ -14,6 +14,7 @@ import ReviewsSection from '@/components/ReviewsSection';
 import HomepageFAQSection from '@/components/HomepageFAQSection';
 import CTASection from '@/components/CTASection';
 import { siteConfig } from '@/lib/site-config';
+import { fetchSanityHomepage, fetchSanityTestimonials } from '@/sanity/lib/queries';
 
 export const metadata = {
   ...buildMetadata({
@@ -25,12 +26,18 @@ export const metadata = {
   title: { absolute: `${siteConfig.brand.name} — ${siteConfig.brand.tagline}` },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Sanity Homepage/Testimonials content, when published, overrides the
+  // hardcoded defaults in each section below. `null`/`[]` (Sanity not
+  // configured, no document yet, or a fetch failure) means every section
+  // renders exactly as it did before this was wired up.
+  const [homepage, testimonials] = await Promise.all([fetchSanityHomepage(), fetchSanityTestimonials()]);
+
   return (
     <>
-      <Hero />
-      <StatsSection />
-      <WhyDigitalAI />
+      <Hero homepage={homepage} />
+      <StatsSection stats={homepage?.stats} />
+      <WhyDigitalAI features={homepage?.whyChooseUs} />
       <CategoryGrid />
       <CourseGrid />
       <PricingPreview />
@@ -39,15 +46,18 @@ export default function HomePage() {
       <AnywhereInIndia />
       <LearningJourney />
       <SkillStack />
-      <ReviewsSection />
+      <ReviewsSection testimonials={testimonials} />
       <HomepageFAQSection />
       <CTASection
-        headline="Still Confused About Your Career?"
-        text="Free career guidance, course recommendation and placement consultation — talk to a learning counsellor today."
+        headline={homepage?.ctaHeading || 'Still Confused About Your Career?'}
+        text={
+          homepage?.ctaDescription ||
+          'Free career guidance, course recommendation and placement consultation — talk to a learning counsellor today.'
+        }
         primaryLabel="Chat on WhatsApp"
         primaryHref="https://wa.me/919310378799"
-        secondaryLabel="Book Free Counselling"
-        secondaryHref="/contact#counselling"
+        secondaryLabel={homepage?.ctaButtonText || 'Book Free Counselling'}
+        secondaryHref={homepage?.ctaButtonLink || '/contact#counselling'}
         showCallNow
       />
     </>

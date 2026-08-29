@@ -3,10 +3,12 @@
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import RevealSection from '@/components/RevealSection';
+import type { SanityTestimonial } from '@/sanity/lib/queries';
 
 // PLACEHOLDER — replace avatar seeds, names, and quotes with real, consented student
 // reviews before publishing. Avatars are auto-generated placeholder images.
-const studentReviews = [
+// Used only until real testimonials are published in Sanity (Testimonials section).
+const placeholderReviews: { name: string; course: string; designation: string; company: string; rating: number; quote: string; seed: string; photoUrl?: string }[] = [
   { name: '[Student Name]', course: 'Data Science', designation: '[Job Title]', company: '[Company]', rating: 5, quote: 'Placeholder review — replace with a real, consented student review before publishing.', seed: 'student1' },
   { name: '[Student Name]', course: 'Full Stack Development', designation: '[Job Title]', company: '[Company]', rating: 5, quote: 'Placeholder review — replace with a real, consented student review before publishing.', seed: 'student2' },
   { name: '[Student Name]', course: 'Digital Marketing', designation: '[Job Title]', company: '[Company]', rating: 4, quote: 'Placeholder review — replace with a real, consented student review before publishing.', seed: 'student3' },
@@ -16,7 +18,23 @@ const studentReviews = [
 // once available. Do not publish invented numbers.
 const googleRating = { score: 4.8, count: '[X]' };
 
-export default function ReviewsSection() {
+export default function ReviewsSection({ testimonials }: { testimonials?: SanityTestimonial[] }) {
+  // Real, published Sanity testimonials replace the placeholder reviews below
+  // once at least one exists — until then the clearly-marked placeholders stay.
+  const studentReviews =
+    testimonials && testimonials.length > 0
+      ? testimonials.map((t, i) => ({
+          name: t.name,
+          course: t.course || '',
+          designation: t.designation || '',
+          company: '',
+          rating: t.rating,
+          quote: t.review,
+          seed: `sanity-${i}`,
+          photoUrl: t.photoUrl,
+        }))
+      : placeholderReviews;
+
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
       <RevealSection className="mb-4 text-center">
@@ -47,7 +65,7 @@ export default function ReviewsSection() {
             <motion.div whileHover={{ y: -3 }} className="glass h-full rounded-2xl p-6">
               <div className="flex items-center gap-3">
                 <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${r.seed}`}
+                  src={r.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${r.seed}`}
                   alt=""
                   aria-hidden="true"
                   className="h-11 w-11 shrink-0 rounded-full bg-white/5"
@@ -55,7 +73,7 @@ export default function ReviewsSection() {
                 />
                 <div>
                   <p className="font-display text-sm font-semibold">{r.name}</p>
-                  <p className="text-xs text-mist">{r.designation} • {r.company}</p>
+                  <p className="text-xs text-mist">{[r.designation, r.company].filter(Boolean).join(' • ')}</p>
                 </div>
               </div>
               <div className="mt-3 flex gap-0.5">

@@ -197,3 +197,191 @@ export async function fetchSanityFaqs(): Promise<SanityFaq[]> {
     return [];
   }
 }
+
+// ---- Site Settings, Homepage, Testimonials --------------------------------
+// These power the global header/footer and the homepage sections. Every field
+// is optional — a `null` return (or an individual empty field) means the
+// caller keeps using the existing hardcoded copy in components/lib, so an
+// empty or partially-filled Sanity document never breaks the site.
+
+export interface SanitySiteSettings {
+  siteName?: string;
+  logoUrl?: string;
+  footerLogoUrl?: string;
+  email?: string;
+  secondaryEmail?: string;
+  phone?: string;
+  whatsappNumber?: string;
+  address?: string;
+  businessHours?: string;
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  twitter?: string;
+  navLinks?: { label: string; href: string; order?: number }[];
+  headerCtaText?: string;
+  headerCtaLink?: string;
+  footerDescription?: string;
+  footerQuickLinks?: { label: string; href: string }[];
+  copyrightText?: string;
+}
+
+export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | null> {
+  if (!client) return null;
+  try {
+    const doc = await client.fetch(
+      `*[_type == "siteSettings"][0]{
+        siteName, logo, footerLogo, email, secondaryEmail, phone, whatsappNumber, address, businessHours,
+        facebook, instagram, linkedin, youtube, twitter,
+        navLinks[] | order(order asc){label, href, order},
+        headerCtaText, headerCtaLink,
+        footerDescription, footerQuickLinks[]{label, href}, copyrightText
+      }`
+    );
+    if (!doc) return null;
+    const logo = urlFor(doc.logo as never);
+    const footerLogo = urlFor(doc.footerLogo as never);
+    return {
+      siteName: doc.siteName || undefined,
+      logoUrl: logo ? logo.width(160).url() : undefined,
+      footerLogoUrl: footerLogo ? footerLogo.width(160).url() : undefined,
+      email: doc.email || undefined,
+      secondaryEmail: doc.secondaryEmail || undefined,
+      phone: doc.phone || undefined,
+      whatsappNumber: doc.whatsappNumber || undefined,
+      address: doc.address || undefined,
+      businessHours: doc.businessHours || undefined,
+      facebook: doc.facebook || undefined,
+      instagram: doc.instagram || undefined,
+      linkedin: doc.linkedin || undefined,
+      youtube: doc.youtube || undefined,
+      twitter: doc.twitter || undefined,
+      navLinks: (doc.navLinks as SanitySiteSettings['navLinks']) || undefined,
+      headerCtaText: doc.headerCtaText || undefined,
+      headerCtaLink: doc.headerCtaLink || undefined,
+      footerDescription: doc.footerDescription || undefined,
+      footerQuickLinks: (doc.footerQuickLinks as SanitySiteSettings['footerQuickLinks']) || undefined,
+      copyrightText: doc.copyrightText || undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export interface SanityHomepage {
+  heroHeading?: string;
+  heroHighlight?: string;
+  heroDescription?: string;
+  heroPrimaryCtaText?: string;
+  heroPrimaryCtaLink?: string;
+  heroSecondaryCtaText?: string;
+  heroSecondaryCtaLink?: string;
+  heroImageUrl?: string;
+  heroImageAlt?: string;
+  stats?: { value: string; label: string }[];
+  aboutTitle?: string;
+  aboutDescription?: string;
+  aboutImageUrl?: string;
+  aboutImageAlt?: string;
+  aboutCtaText?: string;
+  aboutCtaLink?: string;
+  whyChooseUs?: { iconUrl?: string; title: string; description: string }[];
+  coursesSectionTitle?: string;
+  coursesSectionDescription?: string;
+  ctaHeading?: string;
+  ctaDescription?: string;
+  ctaButtonText?: string;
+  ctaButtonLink?: string;
+}
+
+export async function fetchSanityHomepage(): Promise<SanityHomepage | null> {
+  if (!client) return null;
+  try {
+    const doc = await client.fetch(
+      `*[_type == "homepage"][0]{
+        heroHeading, heroHighlight, heroDescription,
+        heroPrimaryCtaText, heroPrimaryCtaLink, heroSecondaryCtaText, heroSecondaryCtaLink,
+        heroImage, heroImageAlt,
+        stats,
+        aboutTitle, aboutDescription, aboutImage, aboutImageAlt, aboutCtaText, aboutCtaLink,
+        whyChooseUs,
+        coursesSectionTitle, coursesSectionDescription,
+        ctaHeading, ctaDescription, ctaButtonText, ctaButtonLink
+      }`
+    );
+    if (!doc) return null;
+    const heroImage = urlFor(doc.heroImage as never);
+    const aboutImage = urlFor(doc.aboutImage as never);
+    return {
+      heroHeading: doc.heroHeading || undefined,
+      heroHighlight: doc.heroHighlight || undefined,
+      heroDescription: doc.heroDescription || undefined,
+      heroPrimaryCtaText: doc.heroPrimaryCtaText || undefined,
+      heroPrimaryCtaLink: doc.heroPrimaryCtaLink || undefined,
+      heroSecondaryCtaText: doc.heroSecondaryCtaText || undefined,
+      heroSecondaryCtaLink: doc.heroSecondaryCtaLink || undefined,
+      heroImageUrl: heroImage ? heroImage.width(1200).url() : undefined,
+      heroImageAlt: doc.heroImageAlt || undefined,
+      stats: Array.isArray(doc.stats) && doc.stats.length > 0 ? doc.stats : undefined,
+      aboutTitle: doc.aboutTitle || undefined,
+      aboutDescription: doc.aboutDescription || undefined,
+      aboutImageUrl: aboutImage ? aboutImage.width(1000).url() : undefined,
+      aboutImageAlt: doc.aboutImageAlt || undefined,
+      aboutCtaText: doc.aboutCtaText || undefined,
+      aboutCtaLink: doc.aboutCtaLink || undefined,
+      whyChooseUs:
+        Array.isArray(doc.whyChooseUs) && doc.whyChooseUs.length > 0
+          ? doc.whyChooseUs.map((f: Record<string, unknown>) => {
+              const icon = urlFor(f.icon as never);
+              return {
+                iconUrl: icon ? icon.width(64).height(64).url() : undefined,
+                title: String(f.title || ''),
+                description: String(f.description || ''),
+              };
+            })
+          : undefined,
+      coursesSectionTitle: doc.coursesSectionTitle || undefined,
+      coursesSectionDescription: doc.coursesSectionDescription || undefined,
+      ctaHeading: doc.ctaHeading || undefined,
+      ctaDescription: doc.ctaDescription || undefined,
+      ctaButtonText: doc.ctaButtonText || undefined,
+      ctaButtonLink: doc.ctaButtonLink || undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export interface SanityTestimonial {
+  name: string;
+  photoUrl?: string;
+  course?: string;
+  designation?: string;
+  review: string;
+  rating: number;
+}
+
+export async function fetchSanityTestimonials(): Promise<SanityTestimonial[]> {
+  if (!client) return [];
+  try {
+    const docs = await client.fetch(
+      `*[_type == "testimonial" && published != false] | order(order asc){
+        studentName, studentPhoto, course, designation, review, rating
+      }`
+    );
+    return (docs || []).map((doc: Record<string, unknown>) => {
+      const photo = urlFor(doc.studentPhoto as never);
+      return {
+        name: String(doc.studentName || ''),
+        photoUrl: photo ? photo.width(96).height(96).url() : undefined,
+        course: (doc.course as string) || undefined,
+        designation: (doc.designation as string) || undefined,
+        review: String(doc.review || ''),
+        rating: Number(doc.rating) || 5,
+      };
+    });
+  } catch {
+    return [];
+  }
+}

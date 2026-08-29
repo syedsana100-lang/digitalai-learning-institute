@@ -57,10 +57,10 @@ export default function Header({ settings }: { settings?: SanitySiteSettings | n
             <Image
               src={logoUrl}
               alt="DigitalAI Learning Institute logo"
-              width={40}
-              height={38}
+              width={180}
+              height={60}
               priority
-              className="h-9 w-auto sm:h-10"
+              className="h-14 w-auto sm:h-16"
             />
             <span className="font-display text-base font-extrabold tracking-tight sm:text-lg">
               Digital<span className="text-gradient">AI</span> Learning

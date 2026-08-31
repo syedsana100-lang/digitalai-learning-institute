@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
+import NextAuth from "next-auth";
+import authConfig from "./auth.config";
 
-export function middleware() {
-  return NextResponse.next();
-}
+export const { auth: middleware } = NextAuth(authConfig);
 
 export const config = {
-  matcher: ['/student-dashboard/:path*', '/admin/:path*'],
+  matcher: ["/student-dashboard/:path*", "/admin/:path*"],
 };

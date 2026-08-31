@@ -1,0 +1,271 @@
+// Private student-portal database — separate from Sanity, which only holds
+// public website content. Nothing here (accounts, documents, payments,
+// enrollments, certificates) is ever stored in Sanity.
+//
+// Provider: any Postgres works (Neon / Vercel Postgres / Supabase all free).
+// Set DATABASE_URL in your .env — see sanity/README.md is for the CMS;
+// see /docs/LMS-SETUP.md (created alongside this schema) for the DB setup.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  SUSPENDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  PARTIALLY_PAID
+}
+
+enum PaymentMethod {
+  UPI
+  BANK_TRANSFER
+  CARD
+  CASH
+  OTHER
+}
+
+enum DocumentType {
+  GOVERNMENT_ID
+  EDUCATIONAL_CERTIFICATE
+  QUALIFICATION_DOCUMENT
+  OTHER
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// --- Auth -------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // null for Google-only accounts
+  role          Role      @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  profile  StudentProfile?
+
+  @@map("users")
+}
+
+// Auth.js (NextAuth) OAuth account linking — required by the Google provider.
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// --- Student profile ----------------------------------------------------
+
+model StudentProfile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  studentCode   String    @unique // human-friendly ID shown in the dashboard, e.g. DAI-2026-0001
+  fullName      String
+  fatherName    String?
+  dob           DateTime?
+  gender        String?
+  photoUrl      String?
+  qualification String?
+  institution   String?
+  yearOfPassing Int?
+  mobile        String?
+  whatsapp      String?
+  address       String?
+  city          String?
+  state         String?
+  country       String?   @default("India")
+  postalCode    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+  documents   StudentDocument[]
+  payments    Payment[]
+  certificates Certificate[]
+
+  @@map("student_profiles")
+}
+
+// --- Documents ------------------------------------------------------------
+
+model StudentDocument {
+  id           String              @id @default(cuid())
+  studentId    String
+  type         DocumentType
+  label        String // e.g. "Aadhaar Card", "Class 12 Marksheet"
+  fileUrl      String // private Vercel Blob URL
+  fileName     String
+  fileSize     Int // bytes
+  status       VerificationStatus  @default(PENDING)
+  uploadedAt   DateTime            @default(now())
+  verifiedAt   DateTime?
+  verifiedById String?
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("student_documents")
+}
+
+// --- Courses (LMS structure — separate from the public Sanity course
+// marketing page; linked loosely by `sanitySlug` so a payment/enrollment can
+// reference the public course without duplicating its marketing content). ---
+
+model LmsCourse {
+  id          String   @id @default(cuid())
+  sanitySlug  String   @unique // matches the Sanity course's slug
+  title       String
+  totalPrice  Int // INR, paise-free (whole rupees) for simplicity
+  createdAt   DateTime @default(now())
+
+  modules     CourseModule[]
+  enrollments Enrollment[]
+
+  @@map("lms_courses")
+}
+
+model CourseModule {
+  id       String @id @default(cuid())
+  courseId String
+  title    String
+  order    Int    @default(0)
+
+  course  LmsCourse      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons CourseLesson[]
+
+  @@map("course_modules")
+}
+
+model CourseLesson {
+  id              String  @id @default(cuid())
+  moduleId        String
+  title           String
+  description     String?
+  videoUrl        String? // external host URL (Mux/Cloudflare Stream/YouTube unlisted) — see LMS-SETUP.md
+  durationSeconds Int?
+  order           Int     @default(0)
+
+  module          CourseModule      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonProgress  LessonProgress[]
+
+  @@map("course_lessons")
+}
+
+// --- Enrollment & progress ------------------------------------------------
+
+model Enrollment {
+  id               String           @id @default(cuid())
+  studentId        String
+  courseId         String
+  enrollmentDate   DateTime         @default(now())
+  courseStartDate  DateTime?
+  courseEndDate    DateTime?
+  totalPrice       Int
+  discount         Int              @default(0)
+  finalPrice       Int
+  status           EnrollmentStatus @default(ACTIVE)
+  completedAt      DateTime?
+  markedCompleteBy String? // admin user id, if manually marked complete
+
+  student  StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course   LmsCourse         @relation(fields: [courseId], references: [id])
+  payments Payment[]
+  progress LessonProgress[]
+  certificate Certificate?
+
+  @@unique([studentId, courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id           String   @id @default(cuid())
+  enrollmentId String
+  lessonId     String
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+
+  enrollment Enrollment   @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     CourseLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, lessonId])
+  @@map("lesson_progress")
+}
+
+// --- Payments ---------------------------------------------------------
+
+model Payment {
+  id            String        @id @default(cuid())
+  studentId     String
+  enrollmentId  String
+  amount        Int
+  method        PaymentMethod
+  referenceId   String? // UPI transaction ref / bank UTR, entered by admin after manual verification
+  status        PaymentStatus @default(PENDING)
+  recordedById  String? // admin user id who recorded/verified this payment
+  paymentDate   DateTime      @default(now())
+  notes         String?
+
+  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  enrollment Enrollment     @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// --- Certificates -------------------------------------------------------
+
+model Certificate {
+  id                 String   @id @default(cuid())
+  enrollmentId       String   @unique
+  studentId          String
+  certificateNumber  String   @unique // e.g. DAI-CERT-2026-000123, used for public verification
+  studentNameSnapshot String  // frozen at issue time, so later name edits don't alter issued certificates
+  courseTitleSnapshot String
+  issueDate          DateTime @default(now())
+  pdfUrl             String? // generated PDF stored in Vercel Blob
+
+  enrollment Enrollment     @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("certificates")
+}

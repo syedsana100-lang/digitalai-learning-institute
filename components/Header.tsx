@@ -36,8 +36,8 @@ export default function Header({ settings }: { settings?: SanitySiteSettings | n
       : defaultNavLinks;
   const logoUrl = settings?.logoUrl || '/images/logo.png';
   const phone = settings?.phone || siteConfig.contact.phone;
-  const headerCtaText = settings?.headerCtaText || 'Enroll Now';
-  const headerCtaLink = settings?.headerCtaLink || '/contact#counselling';
+  const headerCtaText = settings?.headerCtaText || 'Sign In';
+  const headerCtaLink = settings?.headerCtaLink || '/signin';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);

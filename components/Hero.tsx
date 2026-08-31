@@ -3,9 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, MessageCircle, Award, Code2, LifeBuoy, Infinity as InfinityIcon } from 'lucide-react';
+import { ArrowRight, Award, Code2, LifeBuoy, Infinity as InfinityIcon } from 'lucide-react';
 import AnimatedHeroVisual from '@/components/AnimatedHeroVisual';
-import { siteConfig } from '@/lib/site-config';
 import type { SanityHomepage } from '@/sanity/lib/queries';
 
 const tags = [
@@ -25,8 +24,6 @@ const trustBadges = [
   { icon: InfinityIcon, label: 'Lifetime Access' },
 ];
 
-const whatsappHref = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(siteConfig.contact.whatsappDefaultMessage)}`;
-
 // Default copy, used whenever the Sanity Homepage document (or an individual
 // field on it) is empty — publishing a partially-filled document never
 // breaks this section.
@@ -36,7 +33,8 @@ const defaults = {
   highlight: 'Power the Digital Future',
   description:
     'Learn AI, Data Science, Programming, Digital Marketing, Cloud and Cyber Security through practical training — with live mentorship, project-based learning and placement support.',
-  primaryLabel: 'Chat on WhatsApp',
+  primaryLabel: 'Enroll Now',
+  primaryHref: '/contact#counselling',
   secondaryLabel: 'Explore Courses',
   secondaryHref: '/courses',
 };
@@ -46,7 +44,7 @@ export default function Hero({ homepage }: { homepage?: SanityHomepage | null })
   const highlight = homepage?.heroHighlight || defaults.highlight;
   const description = homepage?.heroDescription || defaults.description;
   const primaryLabel = homepage?.heroPrimaryCtaText || defaults.primaryLabel;
-  const primaryHref = homepage?.heroPrimaryCtaLink || whatsappHref;
+  const primaryHref = homepage?.heroPrimaryCtaLink || defaults.primaryHref;
   const secondaryLabel = homepage?.heroSecondaryCtaText || defaults.secondaryLabel;
   const secondaryHref = homepage?.heroSecondaryCtaLink || defaults.secondaryHref;
   const isPrimaryExternal = primaryHref.startsWith('http') || primaryHref.startsWith('tel:');
@@ -77,16 +75,16 @@ export default function Hero({ homepage }: { homepage?: SanityHomepage | null })
                 href={primaryHref}
                 target={primaryHref.startsWith('tel:') ? undefined : '_blank'}
                 rel="noopener noreferrer"
-                className="focus-ring flex items-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
+                className="focus-ring flex items-center gap-2 rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-7 py-3.5 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
               >
-                <MessageCircle className="h-4 w-4" fill="white" /> {primaryLabel}
+                {primaryLabel} <ArrowRight className="h-4 w-4" />
               </a>
             ) : (
               <Link
                 href={primaryHref}
-                className="focus-ring flex items-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
+                className="focus-ring flex items-center gap-2 rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-7 py-3.5 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.03] active:scale-95"
               >
-                <MessageCircle className="h-4 w-4" fill="white" /> {primaryLabel}
+                {primaryLabel} <ArrowRight className="h-4 w-4" />
               </Link>
             )}
             <Link

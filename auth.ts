@@ -4,9 +4,14 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { authConfig } from '@/auth.config';
 
 /**
- * Auth.js (NextAuth v5) config for the student portal.
+ * Full Auth.js (NextAuth v5) config for the student portal — providers plus
+ * database-backed callbacks. This file (and everything it imports, like
+ * bcrypt and the Prisma client) must NEVER be imported from middleware.ts —
+ * it's Node-only and far too large for the Edge runtime. Middleware uses
+ * auth.config.ts instead; see that file for why.
  *
  * - Credentials provider: email + password, hashed with bcrypt. Real
  *   accounts only — there is no dummy/bypass login path.
@@ -53,12 +58,11 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers,
   session: { strategy: 'jwt' },
-  pages: {
-    signIn: '/signin',
-  },
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account }) {
       // First-time Google sign-in: create the User row (and default STUDENT
       // role) since we're not using the Prisma adapter's auto-provisioning
@@ -98,3 +102,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+

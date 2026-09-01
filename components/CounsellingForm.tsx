@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { getAllCourses } from '@/lib/courses-data';
 
 interface FormState {
@@ -15,17 +16,22 @@ interface FormState {
   experienceLevel: string;
   preferredMode: string;
   message: string;
+  website: string; // honeypot — always left empty by real visitors
 }
 
 const initialState: FormState = {
   fullName: '', phone: '', email: '', city: '', qualification: '',
-  interestedCourse: '', experienceLevel: '', preferredMode: 'Online', message: '',
+  interestedCourse: '', experienceLevel: '', preferredMode: 'Online', message: '', website: '',
 };
 
 export default function CounsellingForm() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const courses = getAllCourses();
 
   function validate(): boolean {
@@ -39,13 +45,43 @@ export default function CounsellingForm() {
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    // TODO: replace with real API/CRM integration
-    // await fetch('/api/counselling', { method: 'POST', body: JSON.stringify(form) })
-    // analytics hook: track('counselling_form_submit')
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          phone: form.phone,
+          email: form.email,
+          courseInterested: form.interestedCourse,
+          message: [form.city && `City: ${form.city}`, form.qualification && `Qualification: ${form.qualification}`, form.experienceLevel && `Experience: ${form.experienceLevel}`, form.preferredMode && `Mode: ${form.preferredMode}`, form.message]
+            .filter(Boolean)
+            .join(' | '),
+          sourcePageUrl: typeof window !== 'undefined' ? window.location.href : pathname,
+          utmSource: searchParams.get('utm_source') || undefined,
+          utmMedium: searchParams.get('utm_medium') || undefined,
+          utmCampaign: searchParams.get('utm_campaign') || undefined,
+          utmTerm: searchParams.get('utm_term') || undefined,
+          utmContent: searchParams.get('utm_content') || undefined,
+          website: form.website,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -69,6 +105,17 @@ export default function CounsellingForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="rounded-2xl border border-white/8 bg-ink-900 p-6 sm:p-8">
+      {/* Honeypot field — hidden from real visitors via CSS, bots fill every field they find */}
+      <input
+        type="text"
+        name="website"
+        value={form.website}
+        onChange={(e) => setForm({ ...form, website: e.target.value })}
+        tabIndex={-1}
+        autoComplete="off"
+        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        aria-hidden="true"
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <input
@@ -155,10 +202,13 @@ export default function CounsellingForm() {
         value={form.message}
         onChange={(e) => setForm({ ...form, message: e.target.value })}
       />
+      {submitError && <p className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{submitError}</p>}
       <button
         type="submit"
-        className="focus-ring mt-6 w-full rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-7 py-3.5 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.01] active:scale-95 sm:w-auto"
+        disabled={submitting}
+        className="focus-ring mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-signal-blue to-signal-violet px-7 py-3.5 text-sm font-semibold shadow-glow transition-transform duration-150 hover:scale-[1.01] active:scale-95 disabled:opacity-60 sm:w-auto"
       >
+        {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
         Get Free Counselling
       </button>
     </form>

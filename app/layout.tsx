@@ -2,13 +2,12 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Manrope, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import WhatsAppButton from '@/components/WhatsAppButton';
+import SiteChrome from '@/components/SiteChrome';
 import { GoogleTagManagerScript, GoogleTagManagerNoScript } from '@/components/GoogleTagManager';
 import GTMRouteTracker from '@/components/GTMRouteTracker';
 import { siteConfig } from '@/lib/site-config';
 import { fetchSanitySiteSettings } from '@/sanity/lib/queries';
+import { auth } from '@/auth';
 
 const display = Manrope({ subsets: ['latin'], variable: '--font-display', weight: ['500', '600', '700', '800'] });
 const body = Inter({ subsets: ['latin'], variable: '--font-body', weight: ['400', '500', '600'] });
@@ -63,7 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // Site-wide branding/contact/nav/footer content from Sanity, when published.
   // `null` (Sanity not configured, or no document yet) means Header/Footer
   // fall back to lib/site-config.ts exactly as before.
-  const settings = await fetchSanitySiteSettings();
+  const [settings, session] = await Promise.all([fetchSanitySiteSettings(), auth()]);
 
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
@@ -77,10 +76,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Suspense>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-        <Header settings={settings} />
-        <main>{children}</main>
-        <Footer settings={settings} />
-        <WhatsAppButton />
+        <SiteChrome settings={settings} role={session?.user?.role}>
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

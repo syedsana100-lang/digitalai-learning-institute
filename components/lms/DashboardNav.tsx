@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import {
-  LayoutDashboard, User, BookOpen, FileText, CreditCard, Award, LogOut, Users, ShieldCheck,
+  LayoutDashboard, User, BookOpen, FileText, CreditCard, Award, LogOut, Users, ShieldCheck, Contact,
 } from 'lucide-react';
 
 const studentLinks = [
@@ -18,6 +18,7 @@ const studentLinks = [
 
 const adminLinks = [
   { label: 'Overview', href: '', icon: LayoutDashboard },
+  { label: 'Leads', href: '/leads', icon: Contact },
   { label: 'Students', href: '/students', icon: Users },
   { label: 'Documents', href: '/documents', icon: ShieldCheck },
   { label: 'Courses', href: '/courses', icon: BookOpen },

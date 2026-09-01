@@ -1,6 +1,11 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import { requireAdmin } from '@/lib/lms/auth-helpers';
 import DashboardNav from '@/components/lms/DashboardNav';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await requireAdmin();

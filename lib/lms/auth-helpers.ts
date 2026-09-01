@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
@@ -8,9 +9,16 @@ export { calculatePending, paymentStatusLabel } from '@/lib/lms/pricing';
  * already blocks unauthenticated/wrong-role requests to /student-dashboard
  * and /admin, but every API route re-checks here too — never trust the
  * client, and never rely on a single layer of defense.
+ *
+ * Wrapped in React's `cache()`: both the layout AND the page component for
+ * a given route call this (the layout to gate access, the page to use the
+ * data), which used to mean two database round trips per request. `cache()`
+ * memoizes the result for the lifetime of a single request, so the second
+ * call is free — this is the standard Next.js App Router pattern for
+ * exactly this "layout + page both need the same data" situation.
  */
 
-export async function requireStudentProfile() {
+export const requireStudentProfile = cache(async () => {
   const session = await auth();
   if (!session?.user?.id) return null;
 
@@ -35,10 +43,10 @@ export async function requireStudentProfile() {
   }
 
   return profile;
-}
+});
 
-export async function requireAdmin() {
+export const requireAdmin = cache(async () => {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== 'ADMIN') return null;
   return session;
-}
+});

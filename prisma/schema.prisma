@@ -269,3 +269,57 @@ model Certificate {
 
   @@map("certificates")
 }
+
+// --- Leads (marketing/enquiry forms) -------------------------------------
+// Completely separate from student accounts — a lead is just an interested
+// visitor who filled a form and hasn't (necessarily) signed up.
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  FOLLOW_UP
+  CONVERTED
+  LOST
+}
+
+enum LeadSource {
+  ORGANIC
+  DIRECT
+  GOOGLE_ADS
+  FACEBOOK_ADS
+  WHATSAPP
+  REFERRAL
+  OTHER
+}
+
+model Lead {
+  id                String     @id @default(cuid())
+  leadCode          String     @unique // e.g. LEAD-2026-000123, human-friendly reference
+
+  fullName          String
+  email             String
+  phone             String
+  courseInterested  String?
+  message           String?
+
+  sourcePageUrl     String?
+  ipAddress         String?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  utmTerm           String?
+  utmContent        String?
+  source            LeadSource @default(DIRECT)
+
+  status            LeadStatus @default(NEW)
+  notes             String?    // free-text admin notes, e.g. call outcomes
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@index([email])
+  @@index([phone])
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}

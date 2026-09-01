@@ -1,4 +1,5 @@
 import { buildMetadata } from '@/lib/seo';
+import { Suspense } from 'react';
 import { Mail, Phone, MapPin, MessageCircle, UserCheck, ClipboardList, GraduationCap, CalendarCheck } from 'lucide-react';
 import CounsellingForm from '@/components/CounsellingForm';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -86,7 +87,9 @@ export default function ContactPage() {
 
         <RevealSection id="counselling" delay={0.1}>
           <h2 className="mb-4 font-display text-xl font-semibold">Book Free Counselling</h2>
-          <CounsellingForm />
+          <Suspense fallback={null}>
+            <CounsellingForm />
+          </Suspense>
         </RevealSection>
       </section>
 

@@ -1,6 +1,11 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import { requireStudentProfile } from '@/lib/lms/auth-helpers';
 import DashboardNav from '@/components/lms/DashboardNav';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function StudentDashboardLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStudentProfile();

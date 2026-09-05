@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     '', '/courses', '/fees', '/career-support', '/about', '/instructors',
     '/reviews', '/faq', '/blog', '/resources', '/contact', '/become-an-instructor', '/gallery', '/payment',
+    '/verify-certificate',
     '/privacy-policy', '/terms-and-conditions', '/refund-policy', '/disclaimer', '/cookie-policy',
   ].map((route) => ({
     url: `${base}${route}`,

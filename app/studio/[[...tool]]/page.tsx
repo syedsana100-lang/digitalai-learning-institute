@@ -1,7 +1,15 @@
 import { isSanityConfigured } from '@/sanity/env';
+import type { Metadata } from 'next';
 import StudioClient from './StudioClient';
 
 export const dynamic = 'force-static';
+
+// The CMS admin tool is not content — it must never be indexed or appear
+// in search results.
+export const metadata: Metadata = {
+  title: 'Studio',
+  robots: { index: false, follow: false },
+};
 
 export default function StudioPage() {
   if (!isSanityConfigured) {

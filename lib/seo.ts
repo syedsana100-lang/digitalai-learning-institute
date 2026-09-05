@@ -25,7 +25,10 @@ export function buildMetadata({
   type?: 'website' | 'article';
 }): Metadata {
   const url = `${siteConfig.brand.domain}${path}`;
-  const ogImage = image || `${siteConfig.brand.domain}/og-image.jpg`;
+  // Falls back to the dynamically-generated app/opengraph-image.tsx rather
+  // than a static file — see that file for why (there was never an actual
+  // /public/og-image.jpg, so every page's social-share preview was broken).
+  const ogImage = image || `${siteConfig.brand.domain}/opengraph-image`;
 
   return {
     title,

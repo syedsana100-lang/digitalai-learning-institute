@@ -75,22 +75,13 @@ export default function MobileMenu({ open, onClose, role }: { open: boolean; onC
                 ))}
               </nav>
               <div className="space-y-3 px-5">
-                <div className="flex gap-3">
-                  <Link
-                    href="/signin"
-                    onClick={onClose}
-                    className="focus-ring flex-1 rounded-full border border-white/15 px-6 py-3 text-center font-semibold"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    onClick={onClose}
-                    className="focus-ring flex-1 rounded-full border border-white/15 px-6 py-3 text-center font-semibold"
-                  >
-                    Signup
-                  </Link>
-                </div>
+                <Link
+                  href="/signin"
+                  onClick={onClose}
+                  className="focus-ring block rounded-full border border-white/15 px-6 py-3 text-center font-semibold"
+                >
+                  Login
+                </Link>
                 <a
                   href="tel:+919310378799"
                   onClick={onClose}

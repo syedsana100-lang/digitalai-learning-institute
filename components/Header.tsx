@@ -7,9 +7,16 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Menu, Phone, LayoutDashboard, ShieldCheck, LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
-import { categoryMeta } from '@/lib/courses-data';
+import { categoryMeta, getAllCourses } from '@/lib/courses-data';
 import MobileMenu from '@/components/MobileMenu';
 import type { SanitySiteSettings } from '@/sanity/lib/queries';
+
+const allCourses = getAllCourses();
+const coursesByCategory = Object.keys(categoryMeta).map((slug) => ({
+  slug,
+  meta: categoryMeta[slug as keyof typeof categoryMeta],
+  courses: allCourses.filter((c) => c.category === slug),
+}));
 
 const publicNavLinks = [
   { label: 'Home', href: '/' },
@@ -116,20 +123,41 @@ export default function Header({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 6 }}
                         transition={{ duration: 0.12 }}
-                        className="glass absolute left-1/2 top-full mt-3 w-[560px] -translate-x-1/2 rounded-lg p-5 shadow-card"
+                        className="glass absolute left-1/2 top-full mt-3 max-h-[70vh] w-[640px] -translate-x-1/2 overflow-y-auto rounded-lg p-5 shadow-card"
                       >
-                        <div className="grid grid-cols-2 gap-4">
-                          {Object.entries(categoryMeta).map(([slug, meta]) => (
-                            <Link
-                              key={slug}
-                              href={`/courses?category=${slug}`}
-                              className="focus-ring rounded-md p-3 transition-colors hover:bg-white/5"
-                            >
-                              <p className="font-display text-sm font-semibold">{meta.label}</p>
-                              <p className="mt-1 text-xs leading-relaxed text-mist">{meta.description}</p>
-                            </Link>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+                          {coursesByCategory.map(({ slug, meta, courses }) => (
+                            <div key={slug}>
+                              <Link
+                                href={`/courses?category=${slug}`}
+                                className="focus-ring block text-xs font-semibold uppercase tracking-wide text-signal-cyan hover:underline"
+                              >
+                                {meta.label}
+                              </Link>
+                              <ul className="mt-2 space-y-1.5">
+                                {courses.map((c) => (
+                                  <li key={c.slug}>
+                                    <Link
+                                      href={`/courses/${c.slug}`}
+                                      className="focus-ring block rounded-md px-1 py-1 text-sm text-mist transition-colors hover:bg-white/5 hover:text-paper"
+                                    >
+                                      {c.title}
+                                    </Link>
+                                  </li>
+                                ))}
+                                {courses.length === 0 && (
+                                  <li className="text-xs text-mist/60">Coming soon</li>
+                                )}
+                              </ul>
+                            </div>
                           ))}
                         </div>
+                        <Link
+                          href="/courses"
+                          className="focus-ring mt-4 block border-t border-white/8 pt-3 text-center text-sm font-semibold text-signal-cyan hover:underline"
+                        >
+                          View All Courses →
+                        </Link>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -159,15 +187,9 @@ export default function Header({
               <div className="flex items-center gap-2">
                 <Link
                   href="/signin"
-                  className="focus-ring hidden rounded-full px-4 py-2.5 text-sm font-semibold text-mist transition-colors hover:text-paper lg:inline-block"
+                  className="focus-ring hidden rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/5 lg:inline-block"
                 >
                   Login
-                </Link>
-                <Link
-                  href="/signup"
-                  className="focus-ring hidden rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-white/5 lg:inline-block"
-                >
-                  Signup
                 </Link>
                 <a
                   href="tel:+919310378799"

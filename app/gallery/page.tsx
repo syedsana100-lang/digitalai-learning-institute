@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import { galleryCategories } from '@/lib/gallery-data';
 import { siteConfig } from '@/lib/site-config';
 import RevealSection from '@/components/RevealSection';
+import GalleryLightbox from '@/components/GalleryLightbox';
 import CTASection from '@/components/CTASection';
 
 export const metadata = buildMetadata({
@@ -53,26 +54,7 @@ export default function GalleryPage() {
         </p>
       </RevealSection>
 
-      {galleryCategories.map((cat, catIndex) => (
-        <section key={cat.id} id={cat.id} className={`mx-auto max-w-6xl px-5 py-12 lg:px-8 ${catIndex % 2 === 1 ? 'section-light rounded-3xl' : ''}`}>
-          <RevealSection className="mb-6">
-            <h2 className="font-display text-2xl font-bold">{cat.label}</h2>
-            <p className="mt-1 text-sm text-mist">{cat.description}</p>
-          </RevealSection>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {cat.images.map((img, i) => (
-              <RevealSection key={img.seed} delay={i * 0.06}>
-                <img
-                  src={`https://picsum.photos/seed/${img.seed}/500/360`}
-                  alt={img.alt}
-                  loading="lazy"
-                  className="aspect-[4/3] w-full rounded-2xl border border-white/8 object-cover transition-transform duration-150 hover:scale-[1.02]"
-                />
-              </RevealSection>
-            ))}
-          </div>
-        </section>
-      ))}
+      <GalleryLightbox categories={galleryCategories} />
 
       <CTASection
         headline="Want to Experience It Yourself?"
